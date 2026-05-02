@@ -1,0 +1,1883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#00A651">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="RentEase">
+<meta name="description" content="Property rental management made simple for Kenyan landlords">
+<meta property="og:title" content="RentEase — Property Management">
+<meta property="og:description" content="The easiest way for Kenyan landlords to manage rent, track payments and send reminders.">
+<meta property="og:image" content="https://rentease-kenya.netlify.app/og-image.svg">
+<meta property="og:url" content="https://rentease-kenya.netlify.app">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="RentEase — Property Management">
+<meta name="twitter:description" content="The easiest way for Kenyan landlords to manage rent, track payments and send reminders.">
+<meta name="twitter:image" content="https://rentease-kenya.netlify.app/og-image.svg">
+<link rel="manifest" href="#" id="manifest-link">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2300A651'/%3E%3Cpolygon points='10,28 32,8 54,28' fill='white'/%3E%3Crect x='18' y='28' width='28' height='28' rx='2' fill='white'/%3E%3Crect x='26' y='38' width='12' height='18' rx='2' fill='%2300A651'/%3E%3C/svg%3E">
+<title>RentEase — Property Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --mpesa:#00A651;--mpesa-bright:#00C060;--mpesa-dim:#007A3D;
+  --mpesa-glow:rgba(0,166,81,0.15);--mpesa-glow-strong:rgba(0,166,81,0.25);
+  --bg:#0A0E0B;--bg2:#0F1511;--bg3:#141A15;--bg4:#1A211B;
+  --surface:#1E261F;--surface2:#232B24;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);--border-green:rgba(0,166,81,0.3);
+  --text:#F0F5F1;--text2:#8FA890;--text3:#5A6B5C;
+  --red:#FF4D4D;--red-bg:rgba(255,77,77,0.1);
+  --amber:#F5A623;--amber-bg:rgba(245,166,35,0.1);
+  --blue:#4DA6FF;--blue-bg:rgba(77,166,255,0.1);
+  --font:'Plus Jakarta Sans',sans-serif;--mono:'JetBrains Mono',monospace;
+  --r:10px;--r-lg:14px;--r-xl:18px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:2px}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;display:flex;overflow-x:hidden}
+
+/* ===== LOADING SCREEN ===== */
+.loading-screen{display:flex;position:fixed;inset:0;background:var(--bg);z-index:2000;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+.loading-screen.hide{display:none}
+.loading-logo{width:48px;height:48px;background:var(--mpesa);border-radius:12px;display:flex;align-items:center;justify-content:center}
+.loading-text{font-size:14px;color:var(--text3);font-family:var(--mono)}
+.loading-spinner{width:24px;height:24px;border:2px solid var(--border2);border-top-color:var(--mpesa);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ===== PWA INSTALL BANNER ===== */
+.install-banner{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg3);border-top:1px solid var(--border-green);padding:14px 20px;z-index:9999;align-items:center;gap:12px;box-shadow:0 -8px 32px rgba(0,0,0,0.5)}
+.install-banner.show{display:flex}
+.install-banner-text{flex:1;font-size:13px;font-weight:600}
+.install-banner-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.install-btn{background:var(--mpesa);color:#fff;border:none;border-radius:var(--r);padding:9px 16px;font-size:12px;font-weight:700;font-family:var(--font);cursor:pointer;white-space:nowrap}
+.install-dismiss{background:transparent;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:4px}
+
+/* ===== SUBSCRIPTION GATE ===== */
+.sub-gate{display:none;position:fixed;inset:0;background:var(--bg);z-index:500;align-items:center;justify-content:center;flex-direction:column}
+.sub-gate.active{display:flex}
+.sub-gate::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(0,166,81,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,166,81,0.04) 1px,transparent 1px);background-size:40px 40px;pointer-events:none}
+.sub-card{background:var(--bg3);border:1px solid rgba(255,77,77,0.3);border-radius:var(--r-xl);width:420px;max-width:94vw;padding:32px;position:relative;z-index:1;box-shadow:0 32px 80px rgba(0,0,0,0.6);text-align:center}
+.sub-icon{width:56px;height:56px;background:var(--red-bg);border:1px solid rgba(255,77,77,0.3);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px}
+.sub-title{font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-bottom:8px}
+.sub-body{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:20px}
+.sub-amount{font-size:32px;font-weight:800;color:var(--mpesa-bright);font-family:var(--mono);letter-spacing:-1px;margin-bottom:4px}
+.sub-amount-label{font-size:11px;color:var(--text3);font-family:var(--mono);margin-bottom:20px}
+.sub-steps{background:var(--bg4);border-radius:var(--r);padding:14px;text-align:left;margin-bottom:20px}
+.sub-step{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:12px}
+.sub-step:last-child{margin-bottom:0}
+.sub-step-num{width:20px;height:20px;background:var(--mpesa-glow);border:1px solid var(--border-green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--mpesa-bright);flex-shrink:0;margin-top:1px}
+.sub-step-text{color:var(--text2);line-height:1.5}
+.sub-step-text strong{color:var(--text)}
+.sub-wa-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;background:var(--mpesa);color:#fff;border:none;border-radius:var(--r);font-size:14px;font-weight:700;font-family:var(--font);cursor:pointer;text-decoration:none;margin-bottom:10px;transition:all 0.15s}
+.sub-wa-btn:hover{background:var(--mpesa-bright)}
+.sub-grace{font-size:11px;color:var(--text3);font-family:var(--mono)}
+.sub-grace span{color:var(--amber)}
+
+/* ===== AUTH SCREENS ===== */
+.auth-screen{display:none;position:fixed;inset:0;z-index:1000;background:var(--bg);align-items:center;justify-content:center;flex-direction:column}
+.auth-screen.active{display:flex}
+.auth-screen::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(0,166,81,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,166,81,0.04) 1px,transparent 1px);background-size:40px 40px;pointer-events:none}
+.auth-card{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r-xl);width:420px;max-width:94vw;padding:36px;position:relative;z-index:1;box-shadow:0 32px 80px rgba(0,0,0,0.6)}
+.auth-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px}
+.auth-logo-icon{width:36px;height:36px;background:var(--mpesa);border-radius:9px;display:flex;align-items:center;justify-content:center}
+.auth-logo-text{font-size:20px;font-weight:800;letter-spacing:-0.5px}
+.auth-logo-sub{font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.12em;margin-top:1px}
+.auth-title{font-size:22px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px}
+.auth-sub{font-size:13px;color:var(--text2);margin-bottom:24px}
+.auth-form-group{margin-bottom:14px}
+.auth-label{display:block;font-size:10px;font-weight:700;font-family:var(--mono);letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);margin-bottom:6px}
+.auth-input{width:100%;padding:11px 14px;background:var(--bg4);border:1px solid var(--border2);border-radius:var(--r);font-size:13px;font-family:var(--font);color:var(--text);outline:none;transition:all 0.15s}
+.auth-input:focus{border-color:var(--mpesa);box-shadow:0 0 0 3px var(--mpesa-glow)}
+.auth-input::placeholder{color:var(--text3)}
+.auth-btn{width:100%;padding:12px;background:var(--mpesa);color:#fff;border:none;border-radius:var(--r);font-size:14px;font-weight:700;font-family:var(--font);cursor:pointer;transition:all 0.15s;margin-top:6px}
+.auth-btn:hover{background:var(--mpesa-bright)}
+.auth-btn:disabled{opacity:0.6;cursor:not-allowed}
+.auth-switch{margin-top:18px;text-align:center;font-size:12px;color:var(--text3)}
+.auth-switch a{color:var(--mpesa-bright);cursor:pointer;text-decoration:none;font-weight:600}
+.auth-error{background:var(--red-bg);border:1px solid rgba(255,77,77,0.2);border-radius:var(--r);padding:10px 12px;font-size:12px;color:var(--red);margin-bottom:14px;display:none}
+.auth-error.show{display:block}
+.admin-hint{background:var(--amber-bg);border:1px solid rgba(245,166,35,0.2);border-radius:var(--r);padding:10px 12px;font-size:11px;color:var(--amber);margin-bottom:14px;font-family:var(--mono)}
+.pricing-note{background:var(--mpesa-glow);border:1px solid var(--border-green);border-radius:var(--r);padding:10px 12px;font-size:11px;color:var(--mpesa-bright);margin-bottom:14px;font-family:var(--mono)}
+
+/* ===== ADMIN BAR ===== */
+.admin-bar{background:var(--amber-bg);border-bottom:1px solid rgba(245,166,35,0.2);padding:6px 28px;display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--amber);font-family:var(--mono)}
+
+/* ===== APP LAYOUT ===== */
+.app-wrap{display:none;width:100%;min-height:100vh;flex-direction:column}
+.app-wrap.active{display:flex}
+.sidebar{width:256px;min-height:100vh;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:100}
+.sidebar-logo{padding:24px 20px 20px;border-bottom:1px solid var(--border)}
+.logo-mark{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.logo-icon{width:32px;height:32px;background:var(--mpesa);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.logo-wordmark{font-size:17px;font-weight:800;letter-spacing:-0.5px}
+.logo-sub{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:0.14em;margin-left:42px;margin-top:-2px;text-transform:uppercase}
+.sidebar-user{margin:12px 14px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:12px}
+.sidebar-user-row{display:flex;align-items:center;gap:10px}
+.user-avatar{width:36px;height:36px;border-radius:9px;background:var(--mpesa-glow);border:1px solid var(--border-green);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--mpesa-bright);flex-shrink:0}
+.user-name{font-size:13px;font-weight:700;color:var(--text)}
+.user-role{font-size:10px;color:var(--text3);font-family:var(--mono);margin-top:1px}
+.user-email{font-size:10px;color:var(--text3);font-family:var(--mono);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:150px}
+.logout-btn{margin-top:8px;width:100%;padding:6px;background:transparent;border:1px solid var(--border2);border-radius:6px;color:var(--text3);font-size:11px;font-family:var(--mono);cursor:pointer;transition:all 0.15s;text-align:center}
+.logout-btn:hover{background:var(--red-bg);border-color:rgba(255,77,77,0.3);color:var(--red)}
+.landlord-switcher{margin:8px 14px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:10px 12px;cursor:pointer;position:relative}
+.ls-label{font-size:9px;font-family:var(--mono);color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px}
+.ls-name{font-size:13px;font-weight:700;color:var(--text);display:flex;align-items:center;justify-content:space-between}
+.ls-arrow{color:var(--text3);transition:transform 0.2s}
+.ls-arrow.open{transform:rotate(180deg)}
+.ls-dropdown{position:absolute;left:0;right:0;top:calc(100% + 6px);background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);z-index:200;overflow:hidden;display:none;box-shadow:0 8px 32px rgba(0,0,0,0.5)}
+.ls-dropdown.open{display:block}
+.ls-option{padding:10px 14px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:background 0.1s}
+.ls-option:hover{background:var(--surface)}
+.ls-option.active{color:var(--mpesa-bright)}
+.ls-option-sub{font-size:10px;color:var(--text3);font-family:var(--mono);font-weight:400;margin-top:1px}
+.ls-avatar{width:22px;height:22px;border-radius:6px;background:var(--mpesa-glow);border:1px solid var(--border-green);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--mpesa-bright);flex-shrink:0}
+.sidebar-section{padding:8px 14px;flex:1;overflow-y:auto}
+.nav-heading{font-family:var(--mono);font-size:9px;letter-spacing:0.14em;color:var(--text3);padding:0 8px;margin-bottom:4px;margin-top:14px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;border-radius:var(--r);border:none;background:transparent;color:var(--text2);font-family:var(--font);font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s;text-align:left}
+.nav-item:hover{background:var(--surface);color:var(--text)}
+.nav-item.active{background:var(--mpesa-glow);color:var(--mpesa-bright);border:1px solid var(--border-green)}
+.nav-icon{opacity:0.5;flex-shrink:0;display:flex}.nav-item.active .nav-icon{opacity:1}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:9px;font-weight:700;font-family:var(--mono);padding:1px 6px;border-radius:20px;line-height:16px}
+.nav-badge-green{background:var(--mpesa)}
+.sidebar-bottom{padding:14px;border-top:1px solid var(--border)}
+.mpesa-status{background:var(--mpesa-glow);border:1px solid var(--border-green);border-radius:var(--r);padding:12px;margin-bottom:8px}
+.mpesa-status-header{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.mpesa-dot{width:6px;height:6px;border-radius:50%;background:var(--mpesa-bright);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+.mpesa-status-label{font-size:10px;font-weight:600;color:var(--mpesa-bright);font-family:var(--mono)}
+.mpesa-status-stat{font-size:18px;font-weight:800;color:var(--text);letter-spacing:-0.5px}
+.mpesa-status-sub{font-size:11px;color:var(--text2);margin-top:1px}
+.sub-fee-row{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--surface);border-radius:var(--r);font-size:12px}
+.sub-fee-row span:first-child{color:var(--text2)}.sub-fee-row span:last-child{font-family:var(--mono);font-weight:600;color:var(--mpesa-bright)}
+
+/* ===== MAIN ===== */
+.main{margin-left:256px;flex:1;min-height:100vh;display:flex;flex-direction:column}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-left{display:flex;align-items:center;gap:10px}
+.breadcrumb-title{font-size:15px;font-weight:700;letter-spacing:-0.2px}
+.topbar-month{font-family:var(--mono);font-size:10px;color:var(--text3);background:var(--surface);border:1px solid var(--border2);border-radius:6px;padding:3px 9px}
+.topbar-right{display:flex;gap:8px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:0 14px;height:34px;border-radius:var(--r);font-size:12px;font-weight:600;font-family:var(--font);cursor:pointer;border:none;transition:all 0.15s;white-space:nowrap}
+.btn-primary{background:var(--mpesa);color:#fff}.btn-primary:hover{background:var(--mpesa-bright)}
+.btn-ghost{background:var(--surface);color:var(--text2);border:1px solid var(--border2)}.btn-ghost:hover{background:var(--surface2);color:var(--text)}
+.btn-danger{background:var(--red-bg);color:var(--red);border:1px solid rgba(255,77,77,0.2)}.btn-danger:hover{background:var(--red);color:#fff}
+.btn-sm{height:28px;padding:0 10px;font-size:11px}
+.btn-pay{background:var(--mpesa-glow);color:var(--mpesa-bright);border:1px solid var(--border-green);height:28px;padding:0 10px;font-size:11px}.btn-pay:hover{background:var(--mpesa);color:#fff}
+.btn-edit{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(77,166,255,0.2);height:28px;padding:0 10px;font-size:11px}.btn-edit:hover{background:var(--blue);color:#fff}
+.btn-amber{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(245,166,35,0.2);height:28px;padding:0 10px;font-size:11px}.btn-amber:hover{background:var(--amber);color:#fff}
+.btn-lock{background:var(--red-bg);color:var(--red);border:1px solid rgba(255,77,77,0.2);height:28px;padding:0 10px;font-size:11px}.btn-lock:hover{background:var(--red);color:#fff}
+.btn-unlock{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(245,166,35,0.2);height:28px;padding:0 10px;font-size:11px}.btn-unlock:hover{background:var(--amber);color:#fff}
+.content{padding:24px 28px;flex:1}
+.page{display:none;animation:fadeIn 0.2s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.welcome-banner{background:linear-gradient(135deg,#062010 0%,#091A0D 100%);border:1px solid var(--border-green);border-radius:var(--r-xl);padding:20px 24px;margin-bottom:20px;display:flex;align-items:center;gap:16px}
+.welcome-avatar{width:48px;height:48px;border-radius:12px;background:var(--mpesa-glow);border:1px solid var(--border-green);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:var(--mpesa-bright);flex-shrink:0}
+.welcome-text h2{font-size:16px;font-weight:800;letter-spacing:-0.3px}
+.welcome-text p{font-size:12px;color:var(--text2);margin-top:2px}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.stat-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px;position:relative;overflow:hidden;transition:border-color 0.2s}
+.stat-card:hover{border-color:var(--border2)}
+.stat-card.primary{background:linear-gradient(135deg,#0A1F10 0%,#0D2414 100%);border-color:var(--border-green)}
+.stat-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.si-green{background:var(--mpesa-glow)}.si-red{background:var(--red-bg)}.si-amber{background:var(--amber-bg)}.si-blue{background:var(--blue-bg)}
+.stat-label{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;color:var(--text3);text-transform:uppercase;margin-bottom:5px}
+.stat-value{font-size:22px;font-weight:800;letter-spacing:-1px;color:var(--text);line-height:1;margin-bottom:6px}
+.stat-card.primary .stat-value{color:var(--mpesa-bright)}
+.stat-sub{font-size:11px;color:var(--text2);display:flex;align-items:center;gap:5px}
+.stat-pill{font-family:var(--mono);font-size:9px;padding:2px 6px;border-radius:20px;font-weight:600}
+.pill-green{background:var(--mpesa-glow);color:var(--mpesa-bright)}.pill-red{background:var(--red-bg);color:var(--red)}
+.collect-bar{height:3px;background:var(--surface2);border-radius:2px;margin-top:10px;overflow:hidden}
+.collect-fill{height:100%;border-radius:2px;background:var(--mpesa);transition:width 0.6s}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.section-title{font-size:13px;font-weight:700;letter-spacing:-0.2px}
+.section-sub{font-size:11px;color:var(--text3);font-family:var(--mono)}
+.table-wrap{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;margin-bottom:20px}
+table{width:100%;border-collapse:collapse}
+thead th{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);padding:11px 16px;text-align:left;background:var(--bg4);border-bottom:1px solid var(--border);font-weight:500}
+tbody td{padding:12px 16px;font-size:12px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--surface)}
+tbody tr.row-locked{background:rgba(255,77,77,0.04)}
+tbody tr.row-locked:hover{background:rgba(255,77,77,0.08)}
+.unit-label{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--mpesa-bright);background:var(--mpesa-glow);border:1px solid var(--border-green);padding:2px 7px;border-radius:4px;display:inline-block}
+.unit-label.locked-label{color:var(--red);background:var(--red-bg);border-color:rgba(255,77,77,0.3)}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:600;font-family:var(--mono)}
+.b-paid{background:var(--mpesa-glow);color:var(--mpesa-bright);border:1px solid var(--border-green)}
+.b-arrears{background:var(--red-bg);color:var(--red);border:1px solid rgba(255,77,77,0.2)}
+.b-partial{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(245,166,35,0.2)}
+.b-vacant{background:var(--surface);color:var(--text3);border:1px solid var(--border2)}
+.b-locked-unit{background:var(--red-bg);color:var(--red);border:1px solid rgba(255,77,77,0.3)}
+.b-method{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(77,166,255,0.2)}
+.b-cash{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(245,166,35,0.2)}
+.b-admin{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(245,166,35,0.2)}
+.b-active{background:var(--mpesa-glow);color:var(--mpesa-bright);border:1px solid var(--border-green)}
+.b-locked{background:var(--red-bg);color:var(--red);border:1px solid rgba(255,77,77,0.2)}
+.b-grace{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(245,166,35,0.2)}
+.blink{width:5px;height:5px;border-radius:50%;background:currentColor;animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.unit-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:20px}
+.unit-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px;transition:all 0.18s;position:relative;overflow:hidden}
+.unit-card:hover{border-color:var(--border2);transform:translateY(-1px)}
+.unit-card.occupied{border-color:var(--border-green)}
+.unit-card.unit-locked{border-color:rgba(255,77,77,0.45)!important;background:linear-gradient(135deg,#1A0F0F 0%,#1C1212 100%)!important;transform:none!important}
+.unit-card.unit-locked .unit-number-big{color:var(--red)}
+.locked-banner{display:flex;align-items:center;gap:8px;background:rgba(255,77,77,0.1);border:1px solid rgba(255,77,77,0.2);border-radius:8px;padding:8px 10px;margin-top:10px;font-size:11px;color:var(--red);font-weight:600}
+.locked-banner svg{flex-shrink:0}
+.unit-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.unit-number-big{font-family:var(--mono);font-size:18px;font-weight:600}
+.unit-prop{font-size:10px;color:var(--text3);margin-top:1px;font-family:var(--mono)}
+.unit-rent-display{font-size:20px;font-weight:800;letter-spacing:-0.5px;color:var(--mpesa-bright);margin-bottom:3px}
+.unit-rent-label{font-size:10px;color:var(--text3);margin-bottom:12px}
+.unit-tenant-row{display:flex;align-items:center;gap:8px;padding:8px;background:var(--surface);border-radius:8px;margin-top:8px}
+.avatar{width:26px;height:26px;border-radius:50%;background:var(--mpesa-glow);border:1px solid var(--border-green);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--mpesa-bright);flex-shrink:0}
+.tenant-info p:first-child{font-size:11px;font-weight:600}
+.tenant-info p:last-child{font-size:10px;color:var(--text3);font-family:var(--mono)}
+.unit-actions{display:flex;gap:5px;margin-top:10px;flex-wrap:wrap}
+.arrear-card{background:var(--bg3);border:1px solid rgba(255,77,77,0.15);border-radius:var(--r-lg);padding:18px;margin-bottom:10px;display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center}
+.arrear-owed{font-size:20px;font-weight:800;color:var(--red);letter-spacing:-0.5px;font-family:var(--mono);margin-top:6px}
+.recovery-label{display:flex;justify-content:space-between;font-size:10px;color:var(--text3);font-family:var(--mono);margin-bottom:4px}
+.recovery-bar{height:4px;background:var(--surface2);border-radius:2px;overflow:hidden}
+.recovery-fill{height:100%;border-radius:2px;background:var(--amber)}
+.reminder-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:14px}
+.reminder-icon{width:36px;height:36px;background:var(--amber-bg);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.reminder-info{flex:1}
+.reminder-name{font-size:13px;font-weight:700;margin-bottom:2px}
+.reminder-detail{font-size:11px;color:var(--text3);font-family:var(--mono)}
+.reminder-amount{font-size:16px;font-weight:800;color:var(--red);font-family:var(--mono);margin-bottom:4px;text-align:right}
+.sub-admin-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;margin-bottom:12px}
+.sub-admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.sub-summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.sub-summary-item{background:var(--bg4);border-radius:var(--r);padding:14px;text-align:center}
+.sub-summary-val{font-size:22px;font-weight:800;font-family:var(--mono);letter-spacing:-0.5px}
+.sub-summary-label{font-size:10px;color:var(--text3);font-family:var(--mono);margin-top:3px}
+.landlord-sub-row{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border);transition:background 0.1s}
+.landlord-sub-row:last-child{border-bottom:none}
+.landlord-sub-row:hover{background:var(--surface)}
+.landlord-sub-info{flex:1}
+.landlord-sub-name{font-size:13px;font-weight:700;margin-bottom:2px}
+.landlord-sub-detail{font-size:10px;color:var(--text3);font-family:var(--mono)}
+.landlord-sub-amount{font-size:14px;font-weight:800;font-family:var(--mono);color:var(--mpesa-bright);text-align:right;margin-right:12px}
+.landlord-sub-amount-label{font-size:9px;color:var(--text3);font-family:var(--mono);text-align:right}
+.mpesa-hero{background:linear-gradient(135deg,#062010 0%,#091A0D 100%);border:1px solid var(--border-green);border-radius:var(--r-xl);padding:24px;margin-bottom:20px;position:relative;overflow:hidden}
+.mpesa-hero-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.mpesa-logo-row{display:flex;align-items:center;gap:10px}
+.mpesa-logo-box{background:var(--mpesa);border-radius:6px;padding:5px 9px;font-family:var(--mono);font-size:12px;font-weight:600;color:#fff}
+.mpesa-hero-title{font-size:13px;font-weight:700;color:var(--mpesa-bright)}
+.live-tag{display:flex;align-items:center;gap:6px;background:rgba(0,166,81,0.1);border:1px solid rgba(0,166,81,0.25);border-radius:20px;padding:4px 10px;font-size:10px;font-family:var(--mono);font-weight:600;color:var(--mpesa-bright)}
+.mpesa-stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.mpesa-stat{background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.05);border-radius:var(--r);padding:14px}
+.mpesa-stat-label{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;color:rgba(0,166,81,0.5);text-transform:uppercase;margin-bottom:4px}
+.mpesa-stat-value{font-size:18px;font-weight:800;letter-spacing:-0.5px;color:var(--mpesa-bright)}
+.mpesa-stat-sub{font-size:10px;color:var(--text3);margin-top:2px}
+.mpesa-bar-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:6px}
+.mpesa-bar-label span:last-child{font-family:var(--mono);font-weight:600;color:var(--mpesa-bright)}
+.mpesa-progress{height:6px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden}
+.mpesa-progress-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--mpesa-dim),var(--mpesa-bright));transition:width 0.8s}
+.mpesa-txns{margin-top:18px}
+
+/* ===== MOBILE NAV BAR ===== */
+.mobile-topbar{display:none;position:fixed;top:0;left:0;right:0;height:56px;background:var(--bg2);border-bottom:1px solid var(--border);z-index:200;align-items:center;justify-content:space-between;padding:0 16px}
+.mobile-logo{display:flex;align-items:center;gap:8px}
+.mobile-logo-icon{width:28px;height:28px;background:var(--mpesa);border-radius:7px;display:flex;align-items:center;justify-content:center}
+.mobile-logo-text{font-size:15px;font-weight:800;letter-spacing:-0.3px}
+.hamburger{background:transparent;border:none;color:var(--text);cursor:pointer;padding:6px;display:flex;flex-direction:column;gap:4px}
+.hamburger span{display:block;width:20px;height:2px;background:currentColor;border-radius:2px;transition:all 0.2s}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:150;backdrop-filter:blur(2px)}
+.sidebar-overlay.show{display:block}
+
+/* ===== MOBILE BOTTOM NAV ===== */
+.mobile-bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);z-index:200;padding:8px 0 max(8px,env(safe-area-inset-bottom))}
+.mobile-nav-items{display:flex;justify-content:space-around;align-items:center}
+.mobile-nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;background:transparent;border:none;color:var(--text3);cursor:pointer;padding:4px 12px;border-radius:8px;transition:color 0.15s;font-family:var(--font);position:relative}
+.mobile-nav-item.active{color:var(--mpesa-bright)}
+.mobile-nav-label{font-size:9px;font-weight:600;font-family:var(--mono)}
+.mobile-nav-badge{position:absolute;top:0;right:6px;background:var(--red);color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:10px;font-family:var(--mono)}
+
+/* ===== MOBILE FAB ===== */
+.mobile-fab{display:none;position:fixed;bottom:80px;right:16px;z-index:190;gap:8px;flex-direction:column;align-items:flex-end}
+.fab-btn{background:var(--mpesa);color:#fff;border:none;border-radius:50px;padding:10px 18px;font-size:13px;font-weight:700;font-family:var(--font);cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 4px 20px rgba(0,166,81,0.4);white-space:nowrap}
+.fab-btn-ghost{background:var(--surface);color:var(--text);border:1px solid var(--border2);box-shadow:0 4px 16px rgba(0,0,0,0.3)}
+
+/* ===== RESPONSIVE BREAKPOINTS ===== */
+@media(max-width:768px){
+  .mobile-topbar{display:flex}
+  .mobile-bottom-nav{display:block}
+  .mobile-fab{display:flex}
+  .sidebar{transform:translateX(-100%);transition:transform 0.25s ease;top:0;z-index:160}
+  .sidebar.mobile-open{transform:translateX(0)}
+  .main{margin-left:0;padding-top:56px;padding-bottom:70px}
+  .topbar{display:none}
+  .content{padding:16px}
+  .admin-bar{padding:6px 16px;font-size:10px}
+  
+  /* Stats grid — 2 columns on mobile */
+  .stat-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .stat-value{font-size:18px}
+  
+  /* Welcome banner compact */
+  .welcome-banner{padding:14px 16px;gap:12px;margin-bottom:14px}
+  .welcome-avatar{width:38px;height:38px;font-size:14px}
+  .welcome-text h2{font-size:14px}
+  .welcome-text p{font-size:11px}
+  
+  /* Tables become scrollable */
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table{min-width:500px}
+  
+  /* Unit grid — 1 column on mobile */
+  .unit-grid{grid-template-columns:1fr}
+  
+  /* MPesa stats — 2 col */
+  .mpesa-stats-row{grid-template-columns:repeat(2,1fr);gap:8px}
+  
+  /* Sub summary — 3 col stays but smaller */
+  .sub-summary-grid{gap:8px}
+  .sub-summary-val{font-size:18px}
+  
+  /* Modals full screen on mobile */
+  .modal-box{width:100%;max-width:100%;margin:0;border-radius:var(--r-xl) var(--r-xl) 0 0;position:fixed;bottom:0;left:0;right:0;max-height:90vh;overflow-y:auto}
+  .modal-overlay{align-items:flex-end}
+  
+  /* Reminder cards stack */
+  .reminder-card{flex-wrap:wrap;gap:10px}
+  
+  /* Arrear cards */
+  .arrear-card{grid-template-columns:1fr;gap:10px}
+  
+  /* Landlord sub rows */
+  .landlord-sub-row{flex-wrap:wrap;gap:8px}
+  
+  /* Hide install banner text on tiny screens */
+  .install-banner-sub{display:none}
+
+  /* Form rows stack */
+  .form-row{flex-direction:column}
+
+  /* Page title in mobile topbar */
+  .mobile-page-title{font-size:13px;font-weight:700;color:var(--text);font-family:var(--mono)}
+}
+.txn-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+.txn-row:last-child{border-bottom:none}
+.txn-icon{width:30px;height:30px;background:var(--mpesa-glow);border:1px solid var(--border-green);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.txn-info{flex:1}
+.txn-name{font-size:12px;font-weight:600}
+.txn-ref{font-size:10px;color:var(--text3);font-family:var(--mono)}
+.txn-amount{font-family:var(--mono);font-weight:700;color:var(--mpesa-bright);font-size:13px}
+.empty-state{text-align:center;padding:48px 24px}
+.empty-icon-wrap{width:48px;height:48px;background:var(--surface);border:1px solid var(--border2);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.empty-state h3{font-size:14px;font-weight:700;margin-bottom:5px}
+.empty-state p{font-size:12px;color:var(--text3)}
+.toast{position:fixed;bottom:22px;right:22px;background:var(--surface2);border:1px solid var(--border2);border-left:3px solid var(--mpesa);color:var(--text);padding:11px 16px;border-radius:var(--r);font-size:12px;font-weight:500;box-shadow:0 8px 32px rgba(0,0,0,0.4);z-index:999;transform:translateX(120%);opacity:0;transition:all 0.3s cubic-bezier(.34,1.56,.64,1);max-width:260px}
+.toast.show{transform:translateX(0);opacity:1}
+.toast.error{border-left-color:var(--red)}
+.filter-row{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;align-items:center}
+.filter-input{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:6px 12px;font-size:12px;color:var(--text);font-family:var(--font);outline:none;width:200px}
+.filter-input:focus{border-color:var(--mpesa)}
+.month-pill{padding:5px 12px;border-radius:20px;font-size:10px;font-weight:600;font-family:var(--mono);cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--text3);transition:all 0.15s}
+.month-pill.active{background:var(--mpesa-glow);border-color:var(--border-green);color:var(--mpesa-bright)}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r-xl);width:520px;max-width:96vw;max-height:92vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.7);animation:modalIn 0.2s cubic-bezier(.34,1.56,.64,1)}
+@keyframes modalIn{from{transform:scale(0.95) translateY(8px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.modal-header{padding:22px 26px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-size:16px;font-weight:800;letter-spacing:-0.3px}
+.modal-close{width:26px;height:26px;background:var(--surface);border:1px solid var(--border2);border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);transition:all 0.15s}
+.modal-close:hover{background:var(--surface2);color:var(--text)}
+.modal-body{padding:20px 26px}
+.modal-footer{padding:14px 26px 22px;display:flex;gap:8px;justify-content:flex-end;border-top:1px solid var(--border)}
+.form-group{margin-bottom:14px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{display:block;font-size:10px;font-weight:700;font-family:var(--mono);letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);margin-bottom:6px}
+input,select,textarea{width:100%;padding:9px 12px;background:var(--bg4);border:1px solid var(--border2);border-radius:var(--r);font-size:12px;font-family:var(--font);color:var(--text);outline:none;transition:all 0.15s}
+input:focus,select:focus,textarea:focus{border-color:var(--mpesa);box-shadow:0 0 0 3px var(--mpesa-glow)}
+input::placeholder{color:var(--text3)}
+select option{background:var(--bg3)}
+.confirm-msg{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:6px}
+.confirm-msg strong{color:var(--text)}
+.launch-card{background:var(--bg3);border:1px solid var(--border-green);border-radius:var(--r-xl);padding:24px;margin-bottom:16px}
+.launch-step{display:flex;gap:14px;margin-bottom:18px;align-items:flex-start}
+.launch-step:last-child{margin-bottom:0}
+.launch-step-num{width:28px;height:28px;background:var(--mpesa);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0}
+.launch-step-body h4{font-size:13px;font-weight:700;margin-bottom:4px}
+.launch-step-body p{font-size:12px;color:var(--text2);line-height:1.6}
+.launch-step-body code{font-family:var(--mono);font-size:11px;background:var(--bg4);border:1px solid var(--border2);padding:2px 7px;border-radius:4px;color:var(--mpesa-bright)}
+.copy-url-box{background:var(--bg4);border:1px solid var(--border-green);border-radius:var(--r);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.copy-url-text{font-family:var(--mono);font-size:12px;color:var(--mpesa-bright)}
+
+@media(max-width:900px){
+  .stat-grid{grid-template-columns:1fr 1fr}
+  .mpesa-stats-row{grid-template-columns:1fr 1fr}
+  .sidebar{width:220px}
+  .main{margin-left:220px}
+  .sub-summary-grid{grid-template-columns:1fr 1fr 1fr}
+}
+@media(max-width:680px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .stat-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING SCREEN -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="ls-bg"></div>
+  <div class="ls-grid"></div>
+  <div class="ls-content">
+    <svg class="ls-building" viewBox="0 0 160 280" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="265" width="160" height="15" fill="#0a1a0e" rx="2"/>
+      <rect x="30" y="40" width="100" height="225" fill="#0d2015" rx="4"/>
+      <rect x="26" y="36" width="108" height="8" fill="#0a5c2a" rx="3"/>
+      <rect x="50" y="16" width="60" height="28" fill="#0d2015" rx="3"/>
+      <rect x="47" y="12" width="66" height="6" fill="#0a5c2a" rx="2"/>
+      <rect x="40" y="48" width="16" height="12" rx="2" fill="#1a4a2a" class="ls-win"/>
+      <rect x="62" y="48" width="16" height="12" rx="2" fill="#00C060" class="ls-win ls-win-on"/>
+      <rect x="84" y="48" width="16" height="12" rx="2" fill="#1a4a2a" class="ls-win"/>
+      <rect x="106" y="48" width="16" height="12" rx="2" fill="#00C060" class="ls-win ls-win-on ls-win-delay1"/>
+      <rect x="40" y="68" width="16" height="12" rx="2" fill="#00C060" class="ls-win ls-win-on ls-win-delay2"/>
+      <rect x="62" y="68" width="16" height="12" rx="2" fill="#1a4a2a" class="ls-win"/>
+      <rect x="84" y="68" width="16" height="12" rx="2" fill="#00C060" class="ls-win ls-win-on"/>
+      <rect x="106" y="68" width="16" height="12" rx="2" fill="#1a4a2a" class="ls-win"/>
+      <rect x="40" y="88" width="16" height="12" rx="2" fill="#1a4a2a" class="ls-win"/>
+      <rect x="62" y="88" width="16" height="12" rx="2" fill="#00C060" class="ls-win ls-win-on ls-win-delay1"/>
+      <rect x="84" y="88" width="16" height="12" rx="2" fill="#00C060" class="ls-win ls-win-on ls-win-delay3"/>
+      <rect x="106" y="88" width="16" height="12" rx="2" fill="#1a4a2a" class="ls-win"/>
+      <rect x="40" y="108" width="16" height="12" rx="2" fill="#00C060" class="ls-win ls-win-on ls-win-delay2"/>
+      <rect x="62" y="108" width="16" height="12" rx="2" fill="#00C060" class="ls-win ls-win-on"/>
+      <rect x="84" y="108" width="16" height="12" rx="2" fill="#1a4a2a" class="ls-win"/>
+      <rect x="106" y="108" width="16" height="12" rx="2" fill="#00C060" class="ls-win ls-win-on ls-win-delay1"/>
+      <rect x="40" y="128" width="16" height="12" rx="2" fill="#1a4a2a" class="ls-win"/>
+      <rect x="62" y="128" width="16" height="12" rx="2" fill="#1a4a2a" class="ls-win"/>
+      <rect x="84" y="128" width="16" height="12" rx="2" fill="#00C060" class="ls-win ls-win-on ls-win-delay3"/>
+      <rect x="106" y="128" width="16" height="12" rx="2" fill="#00C060" class="ls-win ls-win-on ls-win-delay2"/>
+      <rect x="40" y="148" width="16" height="12" rx="2" fill="#00C060" class="ls-win ls-win-on"/>
+      <rect x="62" y="148" width="16" height="12" rx="2" fill="#1a4a2a" class="ls-win"/>
+      <rect x="84" y="148" width="16" height="12" rx="2" fill="#00C060" class="ls-win ls-win-on ls-win-delay1"/>
+      <rect x="106" y="148" width="16" height="12" rx="2" fill="#1a4a2a" class="ls-win"/>
+      <rect x="40" y="168" width="16" height="12" rx="2" fill="#1a4a2a" class="ls-win"/>
+      <rect x="62" y="168" width="16" height="12" rx="2" fill="#00C060" class="ls-win ls-win-on ls-win-delay3"/>
+      <rect x="84" y="168" width="16" height="12" rx="2" fill="#1a4a2a" class="ls-win"/>
+      <rect x="106" y="168" width="16" height="12" rx="2" fill="#00C060" class="ls-win ls-win-on"/>
+      <rect x="40" y="188" width="16" height="12" rx="2" fill="#00C060" class="ls-win ls-win-on ls-win-delay2"/>
+      <rect x="62" y="188" width="16" height="12" rx="2" fill="#00C060" class="ls-win ls-win-on ls-win-delay1"/>
+      <rect x="84" y="188" width="16" height="12" rx="2" fill="#1a4a2a" class="ls-win"/>
+      <rect x="106" y="188" width="16" height="12" rx="2" fill="#1a4a2a" class="ls-win"/>
+      <rect x="40" y="208" width="16" height="12" rx="2" fill="#1a4a2a" class="ls-win"/>
+      <rect x="62" y="208" width="16" height="12" rx="2" fill="#00C060" class="ls-win ls-win-on"/>
+      <rect x="84" y="208" width="16" height="12" rx="2" fill="#00C060" class="ls-win ls-win-on ls-win-delay3"/>
+      <rect x="106" y="208" width="16" height="12" rx="2" fill="#1a4a2a" class="ls-win"/>
+      <rect x="55" y="228" width="50" height="32" fill="#0a3d1a" rx="2"/>
+      <rect x="71" y="228" width="18" height="32" fill="#0d5c28" rx="1"/>
+      <ellipse cx="80" cy="228" rx="22" ry="7" fill="rgba(0,192,96,0.18)"/>
+      <line x1="80" y1="12" x2="80" y2="0" stroke="#0a5c2a" stroke-width="2"/>
+      <circle cx="80" cy="0" r="2.5" fill="#00C060" class="ls-antenna"/>
+      <rect x="57" y="20" width="12" height="10" rx="1" fill="#00C060" class="ls-win ls-win-on"/>
+      <rect x="91" y="20" width="12" height="10" rx="1" fill="#00C060" class="ls-win ls-win-on ls-win-delay1"/>
+    </svg>
+    <div class="ls-brand">
+      <div class="ls-logo-row">
+        <div class="ls-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+        <span class="ls-name">RentEase</span>
+      </div>
+      <div class="ls-tagline">PROPERTY MANAGEMENT</div>
+    </div>
+    <div class="ls-progress-wrap">
+      <div class="ls-progress-bar" id="ls-progress-bar"></div>
+    </div>
+    <div class="ls-status" id="ls-status">Initialising system...</div>
+    <div class="ls-pills">
+      <div class="ls-pill">M-PESA</div>
+      <div class="ls-pill">CLOUD SYNC</div>
+      <div class="ls-pill">KENYA</div>
+    </div>
+  </div>
+  <div class="ls-footer">
+    <div class="ls-footer-text">BUILT FOR KENYAN LANDLORDS</div>
+    <div class="ls-footer-dots">
+      <div class="ls-fdot"></div>
+      <div class="ls-fdot"></div>
+      <div class="ls-fdot"></div>
+    </div>
+  </div>
+</div>
+
+<style>
+.loading-screen{position:fixed;inset:0;background:#060d08;z-index:2000;display:flex;align-items:center;justify-content:center;flex-direction:column;overflow:hidden;opacity:1}
+.loading-screen.hide{display:none}
+.ls-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 85%, rgba(0,166,81,0.13) 0%, transparent 60%);pointer-events:none}
+.ls-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,166,81,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,166,81,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none}
+.ls-content{display:flex;flex-direction:column;align-items:center;gap:0;position:relative;z-index:1}
+.ls-building{width:140px;height:auto;filter:drop-shadow(0 0 22px rgba(0,192,96,0.3));margin-bottom:6px;animation:lsbuild 0.8s ease-out both}
+@keyframes lsbuild{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.ls-win{transition:opacity 0.4s}
+.ls-win-on{filter:drop-shadow(0 0 3px rgba(0,192,96,0.8))}
+.ls-win-delay1{animation:winblink 3s 0.7s infinite}
+.ls-win-delay2{animation:winblink 3.5s 1.2s infinite}
+.ls-win-delay3{animation:winblink 2.8s 0.3s infinite}
+.ls-antenna{animation:antpulse 1.5s ease-in-out infinite}
+@keyframes winblink{0%,100%{opacity:1}50%{opacity:0.25}}
+@keyframes antpulse{0%,100%{opacity:1}50%{opacity:0.2}}
+.ls-brand{display:flex;flex-direction:column;align-items:center;gap:5px;margin-top:10px;animation:lsfade 0.6s 0.4s ease-out both}
+@keyframes lsfade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ls-logo-row{display:flex;align-items:center;gap:10px}
+.ls-icon{width:36px;height:36px;background:linear-gradient(135deg,#00A651,#00C060);border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 16px rgba(0,192,96,0.4)}
+.ls-name{font-size:30px;font-weight:800;color:#fff;letter-spacing:-0.5px}
+.ls-tagline{font-size:9px;letter-spacing:5px;color:#00A651;font-family:'JetBrains Mono',monospace;font-weight:600}
+/* Progress bar */
+.ls-progress-wrap{width:200px;height:2px;background:rgba(0,166,81,0.15);border-radius:2px;margin-top:28px;overflow:hidden}
+.ls-progress-bar{height:100%;width:0%;background:linear-gradient(90deg,#00A651,#00C060);border-radius:2px;transition:width 0.6s cubic-bezier(0.4,0,0.2,1);box-shadow:0 0 8px rgba(0,192,96,0.6)}
+.ls-status{font-size:10px;color:#2a5c35;font-family:'JetBrains Mono',monospace;letter-spacing:2px;margin-top:10px;text-transform:uppercase;min-height:16px}
+/* Feature pills */
+.ls-pills{display:flex;gap:8px;margin-top:20px;animation:lsfade 0.6s 1s ease-out both}
+.ls-pill{font-size:9px;color:#1a4a22;border:1px solid rgba(0,166,81,0.15);border-radius:20px;padding:4px 10px;font-family:'JetBrains Mono',monospace;letter-spacing:1px}
+.ls-footer{position:absolute;bottom:28px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.ls-footer-text{font-size:8px;letter-spacing:5px;color:#1a3a22;font-family:'JetBrains Mono',monospace}
+.ls-footer-dots{display:flex;gap:5px}
+.ls-fdot{width:3px;height:3px;border-radius:50%;background:#00A651;animation:lsdot 1.4s ease-in-out infinite}
+.ls-fdot:nth-child(2){animation-delay:0.2s}
+.ls-fdot:nth-child(3){animation-delay:0.4s}
+@keyframes lsdot{0%,80%,100%{opacity:0.2;transform:scale(0.8)}40%{opacity:1;transform:scale(1.2)}}
+</style>
+
+<!-- PWA INSTALL BANNER -->
+<div class="install-banner" id="installBanner">
+  <div>
+    <div class="install-banner-text">📱 Install RentEase</div>
+    <div class="install-banner-sub">Add to home screen for the best experience</div>
+  </div>
+  <button class="install-btn" id="installBtn">Install App</button>
+  <button class="install-dismiss" onclick="document.getElementById('installBanner').classList.remove('show')">✕</button>
+</div>
+
+<!-- SUBSCRIPTION GATE -->
+<div class="sub-gate" id="subGate">
+  <div class="sub-card">
+    <div class="sub-icon">🔒</div>
+    <div class="sub-title">Subscription Required</div>
+    <div class="sub-body">Your RentEase subscription has expired or not yet been confirmed. Pay your monthly fee to regain access.</div>
+    <div class="sub-amount" id="gate-amount">KSH 0</div>
+    <div class="sub-amount-label" id="gate-amount-label">per month (0 units × KSH 280)</div>
+    <div class="sub-steps">
+      <div class="sub-step"><div class="sub-step-num">1</div><div class="sub-step-text">Send <strong id="gate-kes">KSH 0</strong> via M-Pesa to <strong>0116365370</strong></div></div>
+      <div class="sub-step"><div class="sub-step-num">2</div><div class="sub-step-text">Use your <strong>email address</strong> as the M-Pesa reference/note</div></div>
+      <div class="sub-step"><div class="sub-step-num">3</div><div class="sub-step-text">Click WhatsApp below to notify admin for fast confirmation</div></div>
+    </div>
+    <a id="gate-wa-link" href="#" target="_blank" class="sub-wa-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Notify Admin on WhatsApp
+    </a>
+    <div class="sub-grace" id="gate-grace-msg">Contact admin if you've already paid · <span>0116365370</span></div>
+    <div style="margin-top:14px"><button class="btn btn-ghost" style="width:100%;justify-content:center" onclick="doLogout()">Sign Out</button></div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div class="auth-screen active" id="loginScreen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="auth-logo-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      <div><div class="auth-logo-text">RentEase</div><div class="auth-logo-sub">Property Management</div></div>
+    </div>
+    <div class="auth-title">Welcome back</div>
+    <div class="auth-sub">Sign in to manage your properties</div>
+    <div class="auth-error" id="login-error"></div>
+    <div class="auth-form-group">
+      <div class="auth-label">Email address</div>
+      <input class="auth-input" id="login-email" type="email" placeholder="you@example.com" autocomplete="email">
+    </div>
+    <div class="auth-form-group">
+      <div class="auth-label">Password</div>
+      <input class="auth-input" id="login-password" type="password" placeholder="••••••••">
+    </div>
+    <button class="auth-btn" id="login-btn" onclick="doLogin()">Sign In</button>
+    <div class="auth-switch">Don't have an account? <a onclick="showRegister()">Create one</a></div>
+  </div>
+</div>
+
+<!-- REGISTER -->
+<div class="auth-screen" id="registerScreen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="auth-logo-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      <div><div class="auth-logo-text">RentEase</div><div class="auth-logo-sub">Property Management</div></div>
+    </div>
+    <div class="auth-title">Create your account</div>
+    <div class="auth-sub">Start managing your properties today</div>
+    <div class="pricing-note">💰 KSH 280 per unit/month · Pay after adding units · M-Pesa accepted</div>
+    <div class="auth-error" id="reg-error"></div>
+    <div class="form-row" style="margin-bottom:14px">
+      <div class="auth-form-group" style="margin-bottom:0"><div class="auth-label">Full Name</div><input class="auth-input" id="reg-name" placeholder="James Kamau"></div>
+      <div class="auth-form-group" style="margin-bottom:0"><div class="auth-label">Phone</div><input class="auth-input" id="reg-phone" placeholder="07xxxxxxxx"></div>
+    </div>
+    <div class="auth-form-group"><div class="auth-label">Email address</div><input class="auth-input" id="reg-email" type="email" placeholder="you@example.com"></div>
+    <div class="auth-form-group"><div class="auth-label">Password (min 6 characters)</div><input class="auth-input" id="reg-password" type="password" placeholder="Choose a strong password"></div>
+    <button class="auth-btn" id="reg-btn" onclick="doRegister()">Create Account — Free to Start</button>
+    <div class="auth-switch">Already have an account? <a onclick="showLogin()">Sign in</a></div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div class="app-wrap" id="appWrap">
+
+  <!-- MOBILE TOP BAR -->
+  <div class="mobile-topbar" id="mobileTopbar">
+    <button class="hamburger" onclick="toggleMobileSidebar()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="mobile-logo">
+      <div class="mobile-logo-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      <span class="mobile-logo-text">RentEase</span>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="btn btn-ghost btn-sm" onclick="openModal('paymentModal')">+ Pay</button>
+      <button class="btn btn-primary btn-sm" onclick="openModal('unitModal')">+ Unit</button>
+      <button class="btn btn-ghost btn-sm" onclick="doLogout()" style="padding:0 8px;font-size:18px;line-height:1" title="Sign out">⏏</button>
+    </div>
+  </div>
+
+  <!-- SIDEBAR OVERLAY -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMobileSidebar()"></div>
+
+  <!-- MOBILE BOTTOM NAV -->
+  <div class="mobile-bottom-nav">
+    <div class="mobile-nav-items">
+      <button class="mobile-nav-item active" id="mbn-dashboard" onclick="mobileNav('dashboard',this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <span class="mobile-nav-label">Dashboard</span>
+      </button>
+      <button class="mobile-nav-item" id="mbn-units" onclick="mobileNav('units',this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span class="mobile-nav-label">Units</span>
+      </button>
+      <button class="mobile-nav-item" id="mbn-mpesa" onclick="mobileNav('mpesa',this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        <span class="mobile-nav-label">M-Pesa</span>
+      </button>
+      <button class="mobile-nav-item" id="mbn-arrears" onclick="mobileNav('arrears',this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span class="mobile-nav-label">Arrears</span>
+      </button>
+      <button class="mobile-nav-item" id="mbn-payments" onclick="mobileNav('payments',this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <span class="mobile-nav-label">Payments</span>
+      </button>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <div class="logo-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+        <span class="logo-wordmark">RentEase</span>
+      </div>
+      <div class="logo-sub">Property Management</div>
+    </div>
+    <div class="sidebar-user">
+      <div class="sidebar-user-row">
+        <div class="user-avatar" id="sidebar-avatar">?</div>
+        <div style="flex:1;min-width:0">
+          <div class="user-name" id="sidebar-name">—</div>
+          <div class="user-email" id="sidebar-email">—</div>
+          <div class="user-role" id="sidebar-role-tag">—</div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="doLogout()">Sign out</button>
+    </div>
+    <div class="landlord-switcher" id="adminSwitcher" style="display:none" onclick="toggleLandlordDropdown()">
+      <div class="ls-label">Viewing as</div>
+      <div class="ls-name"><span id="ls-current-name">All Landlords</span><span class="ls-arrow" id="ls-arrow">▾</span></div>
+      <div class="ls-dropdown" id="ls-dropdown"></div>
+    </div>
+    <div class="sidebar-section">
+      <div class="nav-heading">Main</div>
+      <button class="nav-item active" data-page="dashboard"><span class="nav-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg></span>Dashboard</button>
+      <button class="nav-item" data-page="mpesa"><span class="nav-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span>M-Pesa<span class="nav-badge nav-badge-green" id="mpesa-badge">0</span></button>
+      <button class="nav-item" data-page="units"><span class="nav-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>Units</button>
+      <button class="nav-item" data-page="payments"><span class="nav-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>Payments</button>
+      <button class="nav-item" data-page="arrears"><span class="nav-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>Arrears<span class="nav-badge" id="arrears-badge">0</span></button>
+      <button class="nav-item" data-page="reminders"><span class="nav-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>Reminders<span class="nav-badge" id="reminders-badge">0</span></button>
+      <div class="nav-heading" id="admin-nav-section" style="display:none">Admin</div>
+      <button class="nav-item" data-page="subscriptions" id="nav-subscriptions" style="display:none"><span class="nav-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span>Subscriptions<span class="nav-badge" style="background:var(--red)" id="unpaid-sub-badge">0</span></button>
+      <button class="nav-item" data-page="admin-users" id="nav-admin-users" style="display:none"><span class="nav-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>All Landlords<span class="nav-badge b-admin" style="background:var(--amber-bg);color:var(--amber)" id="users-count">0</span></button>
+      <button class="nav-item" data-page="launch" id="nav-launch" style="display:none"><span class="nav-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></span>Launch Guide</button>
+    </div>
+    <div class="sidebar-bottom">
+      <div class="mpesa-status">
+        <div class="mpesa-status-header"><div class="mpesa-dot"></div><span class="mpesa-status-label">M-Pesa Live</span></div>
+        <div class="mpesa-status-stat" id="sidebar-mpesa-total">KSH 0</div>
+        <div class="mpesa-status-sub">collected this month</div>
+      </div>
+      <div class="sub-fee-row"><span>Your platform fee</span><span id="sidebar-fee">KSH 0/mo</span></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="admin-bar" id="adminBar" style="display:none">
+      ⚡ Admin mode — viewing: <span id="admin-viewing-label" style="font-weight:700;margin:0 4px">All Landlords</span>
+      <span id="admin-switch-back" style="cursor:pointer;text-decoration:underline;display:none" onclick="setLandlord(null)">← View all</span>
+    </div>
+    <div class="topbar">
+      <div class="topbar-left">
+        <span class="breadcrumb-title" id="page-title">Dashboard</span>
+        <span class="topbar-month" id="topbar-month"></span>
+      </div>
+      <div class="topbar-right">
+        <button class="btn btn-ghost" onclick="openModal('paymentModal')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Log Payment
+        </button>
+        <button class="btn btn-primary" onclick="openModal('unitModal')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Unit
+        </button>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- DASHBOARD -->
+      <div id="page-dashboard" class="page active">
+        <div class="welcome-banner">
+          <div class="welcome-avatar" id="welcome-avatar">?</div>
+          <div class="welcome-text">
+            <h2 id="welcome-greeting">Welcome!</h2>
+            <p id="welcome-sub">Here's your property overview for this month.</p>
+          </div>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-card primary">
+            <div class="stat-icon si-green"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00A651" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+            <div class="stat-label">Expected This Month</div>
+            <div class="stat-value" id="stat-expected">KSH 0</div>
+            <div class="stat-sub"><span class="stat-pill pill-green" id="stat-pct">0%</span> collected</div>
+            <div class="collect-bar"><div class="collect-fill" id="collect-fill" style="width:0%"></div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon si-green"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00A651" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="stat-label">Collected</div>
+            <div class="stat-value" id="stat-collected">KSH 0</div>
+            <div class="stat-sub" id="dash-month-label"></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon si-red"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF4D4D" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+            <div class="stat-label">Outstanding</div>
+            <div class="stat-value" id="stat-outstanding">KSH 0</div>
+            <div class="stat-sub"><span class="stat-pill pill-red" id="stat-arrears-badge">0</span> in arrears</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon si-blue"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4DA6FF" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div>
+            <div class="stat-label">Occupancy</div>
+            <div class="stat-value" id="stat-occupancy">0%</div>
+            <div class="stat-sub" id="stat-units-sub">0 / 0 units</div>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Unit</th><th>Property</th><th>Tenant</th><th>Rent (KSH)</th><th>Status</th><th>Paid</th><th>Balance</th><th>Actions</th></tr></thead>
+            <tbody id="dash-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- MPESA -->
+      <div id="page-mpesa" class="page">
+        <div class="mpesa-hero">
+          <div class="mpesa-hero-header">
+            <div class="mpesa-logo-row"><div class="mpesa-logo-box">M-PESA</div><div class="mpesa-hero-title">Collections Dashboard</div></div>
+            <div class="live-tag"><div class="mpesa-dot"></div>Live</div>
+          </div>
+          <div class="mpesa-stats-row">
+            <div class="mpesa-stat"><div class="mpesa-stat-label">Total Collected</div><div class="mpesa-stat-value" id="mp-collected">KSH 0</div></div>
+            <div class="mpesa-stat"><div class="mpesa-stat-label">M-Pesa Txns</div><div class="mpesa-stat-value" id="mp-txns">0</div></div>
+            <div class="mpesa-stat"><div class="mpesa-stat-label">Pending</div><div class="mpesa-stat-value" id="mp-pending">KSH 0</div></div>
+            <div class="mpesa-stat"><div class="mpesa-stat-label">Collection Rate</div><div class="mpesa-stat-value" id="mp-rate">0%</div></div>
+          </div>
+          <div class="mpesa-bar-label"><span id="mp-bar-label">0 / 0 units paid</span><span id="mp-bar-pct">0%</span></div>
+          <div class="mpesa-progress"><div class="mpesa-progress-fill" id="mp-progress-fill" style="width:0%"></div></div>
+          <div class="mpesa-txns" id="mp-txn-list"></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Date</th><th>Unit</th><th>Tenant</th><th>Amount</th><th>Method</th><th>Reference</th><th>Actions</th></tr></thead>
+            <tbody id="mp-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- UNITS -->
+      <div id="page-units" class="page">
+        <div class="filter-row">
+          <input class="filter-input" id="unit-search" placeholder="Search units, tenants..." oninput="renderUnits()">
+          <select class="filter-input" id="unit-status-filter" style="width:auto" onchange="renderUnits()">
+            <option value="">All Units</option>
+            <option value="occupied">Occupied</option>
+            <option value="vacant">Vacant</option>
+            <option value="locked">Locked</option>
+          </select>
+        </div>
+        <div class="unit-grid" id="unit-grid"></div>
+      </div>
+
+      <!-- PAYMENTS -->
+      <div id="page-payments" class="page">
+        <div class="filter-row" id="month-filters"></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Date</th><th>Unit</th><th>Tenant</th><th>Amount</th><th>Method</th><th>Reference</th><th>Actions</th></tr></thead>
+            <tbody id="pay-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ARREARS -->
+      <div id="page-arrears" class="page">
+        <div class="section-header"><div class="section-title">Tenants in Arrears</div><span class="section-sub" id="arrears-month-label"></span></div>
+        <div id="arrears-container"></div>
+      </div>
+
+      <!-- REMINDERS -->
+      <div id="page-reminders" class="page">
+        <div class="section-header"><div class="section-title">Send Reminders</div><span class="section-sub" id="reminder-month-label"></span></div>
+        <div id="reminders-container"></div>
+      </div>
+
+      <!-- SUBSCRIPTIONS (Admin) -->
+      <div id="page-subscriptions" class="page">
+        <div class="sub-summary-grid" style="margin-bottom:20px">
+          <div class="sub-summary-item"><div class="sub-summary-val" id="sub-total-revenue">KSH 0</div><div class="sub-summary-label">Total Revenue</div></div>
+          <div class="sub-summary-item"><div class="sub-summary-val" style="color:var(--mpesa-bright)" id="sub-active-count">0</div><div class="sub-summary-label">Active</div></div>
+          <div class="sub-summary-item"><div class="sub-summary-val" style="color:var(--red)" id="sub-unpaid-count">0</div><div class="sub-summary-label">Unpaid</div></div>
+        </div>
+        <div class="table-wrap" id="sub-table-wrap"><div id="sub-landlord-list"></div></div>
+      </div>
+
+      <!-- ADMIN: ALL LANDLORDS -->
+      <div id="page-admin-users" class="page">
+        <div class="section-header" style="margin-bottom:16px">
+          <div class="section-title">All Registered Landlords</div>
+          <span class="section-sub" id="landlord-count-label">0 accounts</span>
+        </div>
+        <div class="table-wrap"><div id="admin-users-list"></div></div>
+      </div>
+
+      <!-- LAUNCH GUIDE -->
+      <div id="page-launch" class="page">
+        <div style="background:var(--mpesa-glow);border:1px solid var(--border-green);border-radius:var(--r-lg);padding:16px 20px;margin-bottom:20px;font-size:13px;color:var(--mpesa-bright);font-weight:600">
+          🚀 Your app is now powered by Firebase. Data is safely stored in the cloud!
+        </div>
+        <div class="launch-card">
+          <div style="font-size:14px;font-weight:800;margin-bottom:18px;letter-spacing:-0.3px">Your App is Live — Share it with Landlords</div>
+          <div class="launch-step"><div class="launch-step-num">1</div><div class="launch-step-body"><h4>Your live URL</h4><p>Share this link with landlords to sign up and use the app.</p><div class="copy-url-box"><span class="copy-url-text" id="live-url">your-app.vercel.app</span><button class="btn btn-pay btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('live-url').textContent).then(()=>toast('Copied!'))">Copy</button></div></div></div>
+          <div class="launch-step"><div class="launch-step-num">2</div><div class="launch-step-body"><h4>Install on phone</h4><p>Open your URL on any phone → tap Share → "Add to Home Screen" → installs like a real app.</p></div></div>
+          <div class="launch-step"><div class="launch-step-num">3</div><div class="launch-step-body"><h4>Admin login</h4><p>Sign in with your admin email and password to manage all landlords and subscriptions.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="unitModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title" id="unit-modal-title">Add New Unit</div><div class="modal-close" onclick="closeModal('unitModal')">✕</div></div>
+    <div class="modal-body">
+      <input type="hidden" id="u-id">
+      <div class="form-row">
+        <div class="form-group"><label>Unit Number / Name</label><input id="u-name" placeholder="e.g. A1, Flat 3"></div>
+        <div class="form-group"><label>Monthly Rent (KSH)</label><input type="number" id="u-rent" placeholder="8000"></div>
+      </div>
+      <div class="form-group"><label>Property / Block</label><input id="u-property" placeholder="e.g. Njoro Court"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Tenant Name</label><input id="u-tenant" placeholder="Full name (optional)"></div>
+        <div class="form-group"><label>Tenant Phone</label><input id="u-phone" placeholder="07xxxxxxxx"></div>
+      </div>
+      <div class="form-group"><label>Move-in Date</label><input type="date" id="u-movein"></div>
+      <div class="form-group"><label>Notes</label><input id="u-notes" placeholder="Any additional notes"></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('unitModal')">Cancel</button><button class="btn btn-primary" id="unit-modal-btn" onclick="saveUnit()">Add Unit</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="paymentModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title" id="pay-modal-title">Log Payment</div><div class="modal-close" onclick="closeModal('paymentModal')">✕</div></div>
+    <div class="modal-body">
+      <input type="hidden" id="p-id">
+      <div class="form-row">
+        <div class="form-group"><label>Unit</label><select id="p-unit" onchange="prefillRent()"><option value="">— Select unit —</option></select></div>
+        <div class="form-group"><label>Amount (KSH)</label><input type="number" id="p-amount" placeholder="e.g. 8000"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Date</label><input type="date" id="p-date"></div>
+        <div class="form-group"><label>Method</label><select id="p-method"><option>M-Pesa</option><option>Cash</option><option>Bank Transfer</option><option>Cheque</option></select></div>
+      </div>
+      <div class="form-group"><label>M-Pesa Ref / Note</label><input id="p-note" placeholder="e.g. QK12345678"></div>
+      <div class="form-group"><label>Month (payment for)</label><input type="month" id="p-month"></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('paymentModal')">Cancel</button><button class="btn btn-primary" id="pay-modal-btn" onclick="savePayment()">Log Payment</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="quickModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title" id="qp-title">Log Payment</div><div class="modal-close" onclick="closeModal('quickModal')">✕</div></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label>Amount (KSH)</label><input type="number" id="qp-amount"></div>
+        <div class="form-group"><label>Method</label><select id="qp-method"><option>M-Pesa</option><option>Cash</option><option>Bank Transfer</option></select></div>
+      </div>
+      <div class="form-group"><label>Reference / Note</label><input id="qp-note" placeholder="M-Pesa ref or note"></div>
+      <div class="form-group"><label>Month (payment for)</label><input type="month" id="qp-month"></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('quickModal')">Cancel</button><button class="btn btn-primary" onclick="confirmQuickPay()">Confirm</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal" style="width:420px">
+    <div class="modal-header"><div class="modal-title" style="color:var(--red)">Confirm Action</div><div class="modal-close" onclick="closeModal('confirmModal')">✕</div></div>
+    <div class="modal-body"><p class="confirm-msg" id="confirm-msg">Are you sure?</p></div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('confirmModal')">Cancel</button><button class="btn btn-danger" id="confirm-ok-btn">Confirm</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- FIREBASE SDK (compat — works in regular scripts, no module scope trap) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+// ============================================================
+// FIREBASE CONFIG
+// ============================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyBco1DACI1T4MsfQBLhP2eaBxnc7wF4zBs",
+  authDomain: "rentease-5f3e7.firebaseapp.com",
+  projectId: "rentease-5f3e7",
+  storageBucket: "rentease-5f3e7.firebasestorage.app",
+  messagingSenderId: "745832459290",
+  appId: "1:745832459290:web:f202e42832c74f70e0f5a3"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// ============================================================
+// CONSTANTS
+// ============================================================
+const ADMIN_EMAIL = 'michaeljosef280@gmail.com';
+const ADMIN_PASS = 'Rich1484#';
+const ADMIN_ID = 'rentease_admin_mj';
+const PLATFORM_FEE = 280;
+const ADMIN_PHONE = '0116365370';
+const SESSION_KEY = 'rentease_session_v3';
+
+let currentUser = null;
+let adminViewingId = null;
+let S = { units: [], payments: [], month: new Date().toISOString().slice(0, 7) };
+let qpUnitId = null;
+let deferredPrompt = null;
+let allUsersCache = {};
+
+// ============================================================
+// PWA
+// ============================================================
+function injectManifest() {
+  const manifest = { name: 'RentEase — Property Management', short_name: 'RentEase', start_url: '/', display: 'standalone', background_color: '#0A0E0B', theme_color: '#00A651', icons: [{ src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='32' fill='%2300A651'/%3E%3Cpath d='M36 96L96 40l60 56v64a8 8 0 01-8 8H44a8 8 0 01-8-8V96z' fill='white'/%3E%3Crect x='72' y='116' width='48' height='48' rx='4' fill='%2300A651'/%3E%3C/svg%3E", sizes: '192x192', type: 'image/svg+xml' }] };
+  const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+  document.getElementById('manifest-link').href = URL.createObjectURL(blob);
+}
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredPrompt = e; document.getElementById('installBanner').classList.add('show'); });
+document.getElementById('installBtn').addEventListener('click', () => { if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt.userChoice.then(() => { deferredPrompt = null; document.getElementById('installBanner').classList.remove('show'); }); } });
+
+// ============================================================
+// SESSION (keep login across page refreshes — browser only, not the data)
+// ============================================================
+function getSession() { try { return JSON.parse(localStorage.getItem(SESSION_KEY)); } catch(e) { return null; } }
+function saveSession(u) { localStorage.setItem(SESSION_KEY, JSON.stringify(u)); }
+function clearSession() { localStorage.removeItem(SESSION_KEY); }
+
+// ============================================================
+// FIRESTORE HELPERS (compat syntax)
+// ============================================================
+async function fsGetUser(uid) {
+  const snap = await db.collection('users').doc(uid).get();
+  return snap.exists ? snap.data() : null;
+}
+async function fsSetUser(uid, data) {
+  await db.collection('users').doc(uid).set(data, { merge: true });
+}
+async function fsGetAllUsers() {
+  const snap = await db.collection('users').get();
+  const out = {};
+  snap.forEach(d => { out[d.id] = d.data(); });
+  allUsersCache = out;
+  return out;
+}
+async function fsGetData(uid) {
+  const snap = await db.collection('data').doc(uid).get();
+  return snap.exists ? snap.data() : { units: [], payments: [] };
+}
+async function fsSetData(uid, data) {
+  await db.collection('data').doc(uid).set(data);
+}
+async function fsGetSub(uid) {
+  const snap = await db.collection('subscriptions').doc(uid).get();
+  return snap.exists ? snap.data() : null;
+}
+async function fsSetSub(uid, data) {
+  await db.collection('subscriptions').doc(uid).set(data, { merge: true });
+}
+async function fsGetAllSubs() {
+  const snap = await db.collection('subscriptions').get();
+  const out = {};
+  snap.forEach(d => { out[d.id] = d.data(); });
+  return out;
+}
+
+// ============================================================
+// SUBSCRIPTION SYSTEM
+// ============================================================
+const thisMonth = () => new Date().toISOString().slice(0, 7);
+
+function getSubStatus(sub) {
+  if (!sub) return 'unpaid';
+  if (sub.locked) return 'locked';
+  if (sub.paidMonth === thisMonth()) return 'active';
+  const now = new Date();
+  const [y, m] = (sub.paidMonth || '2000-01').split('-').map(Number);
+  const graceEnd = new Date(y, m, 5);
+  if (now <= graceEnd) return 'grace';
+  return 'locked';
+}
+
+async function markSubPaid(userId) {
+  const user = allUsersCache[userId];
+  if (!user) return;
+  const d = await fsGetData(userId);
+  const units = (d.units || []).length;
+  const subData = { paidMonth: thisMonth(), paidAt: new Date().toISOString(), units, amount: units * PLATFORM_FEE, userName: user.name, userEmail: user.email, locked: false };
+  await fsSetSub(userId, subData);
+  toast(`✅ ${user.name} marked as paid — KSH ${(units * PLATFORM_FEE).toLocaleString()}`);
+  renderSubscriptions();
+}
+window.markSubPaid = markSubPaid;
+
+async function lockAccount(userId) {
+  const user = allUsersCache[userId];
+  showConfirm(`Lock account for <strong>${user?.name}</strong>? They won't be able to access their dashboard.`, async () => {
+    await fsSetSub(userId, { paidMonth: '2000-01', locked: true });
+    toast(`🔒 ${user?.name}'s account locked`, 'error');
+    renderSubscriptions();
+  });
+}
+window.lockAccount = lockAccount;
+
+async function unlockAccount(userId) {
+  await fsSetSub(userId, { locked: false, paidMonth: thisMonth() });
+  toast('Account unlocked');
+  renderSubscriptions();
+}
+window.unlockAccount = unlockAccount;
+
+async function checkSubGate() {
+  if (!currentUser || currentUser.role === 'admin') return false;
+  const sub = await fsGetSub(currentUser.id);
+  if (getSubStatus(sub) === 'locked') { showSubGate(sub); return true; }
+  return false;
+}
+
+async function showSubGate(sub) {
+  const d = await fsGetData(currentUser.id);
+  const units = (d.units || []).length || 0;
+  const amount = Math.max(units * PLATFORM_FEE, PLATFORM_FEE);
+  document.getElementById('gate-amount').textContent = 'KSH ' + amount.toLocaleString();
+  document.getElementById('gate-amount-label').textContent = `per month (${units} unit${units !== 1 ? 's' : ''} × KSH ${PLATFORM_FEE})`;
+  document.getElementById('gate-kes').textContent = 'KSH ' + amount.toLocaleString();
+  const msg = `Hello, I am ${currentUser.name} (${currentUser.email}). I have paid KSH ${amount.toLocaleString()} for my RentEase subscription. Please confirm my account.`;
+  document.getElementById('gate-wa-link').href = `https://wa.me/254${ADMIN_PHONE.replace(/^0/, '')}?text=${encodeURIComponent(msg)}`;
+  document.getElementById('subGate').classList.add('active');
+}
+function hideSubGate() { document.getElementById('subGate').classList.remove('active'); }
+
+// ============================================================
+// AUTH
+// ============================================================
+function showLogin() { document.getElementById('loginScreen').classList.add('active'); document.getElementById('registerScreen').classList.remove('active'); }
+function showRegister() { document.getElementById('registerScreen').classList.add('active'); document.getElementById('loginScreen').classList.remove('active'); }
+window.showLogin = showLogin;
+window.showRegister = showRegister;
+
+function showError(id, msg) { const el = document.getElementById(id); el.textContent = msg; el.classList.add('show'); }
+function hideError(id) { document.getElementById(id).classList.remove('show'); }
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const pass = document.getElementById('login-password').value;
+  hideError('login-error');
+  if (!email || !pass) return showError('login-error', 'Please fill in all fields.');
+  const btn = document.getElementById('login-btn');
+  btn.disabled = true; btn.textContent = 'Signing in...';
+  try {
+    if (email === ADMIN_EMAIL.toLowerCase() && pass === ADMIN_PASS) {
+      currentUser = { id: ADMIN_ID, name: 'MJ Admin', email: ADMIN_EMAIL, role: 'admin' };
+      saveSession(currentUser); await launchApp(); return;
+    }
+    // Find user by email in Firestore
+    const allUsers = await fsGetAllUsers();
+    const userEntry = Object.entries(allUsers).find(([, u]) => u.email === email);
+    if (!userEntry) { showError('login-error', 'Email not found. Please register.'); return; }
+    const [uid, user] = userEntry;
+    if (user.password !== btoa(pass)) { showError('login-error', 'Incorrect password.'); return; }
+    currentUser = { id: uid, name: user.name, email: user.email, phone: user.phone, role: 'landlord' };
+    saveSession(currentUser); await launchApp();
+  } catch(e) {
+    showError('login-error', 'Connection error. Check your internet and try again.');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Sign In';
+  }
+}
+window.doLogin = doLogin;
+
+async function doRegister() {
+  const name = document.getElementById('reg-name').value.trim();
+  const phone = document.getElementById('reg-phone').value.trim();
+  const email = document.getElementById('reg-email').value.trim().toLowerCase();
+  const pass = document.getElementById('reg-password').value;
+  hideError('reg-error');
+  if (!name || !email || !pass) return showError('reg-error', 'Please fill in all fields.');
+  if (pass.length < 6) return showError('reg-error', 'Password must be at least 6 characters.');
+  const btn = document.getElementById('reg-btn');
+  btn.disabled = true; btn.textContent = 'Creating account...';
+  try {
+    const allUsers = await fsGetAllUsers();
+    const exists = Object.values(allUsers).find(u => u.email === email);
+    if (exists) { showError('reg-error', 'Email already registered. Please sign in.'); return; }
+    const id = 'u_' + Date.now();
+    const userData = { id, name, email, phone, password: btoa(pass), createdAt: new Date().toISOString() };
+    await fsSetUser(id, userData);
+    // Give free first month
+    await fsSetSub(id, { paidMonth: thisMonth(), paidAt: new Date().toISOString(), units: 0, amount: 0, userName: name, userEmail: email, freeMonth: true, locked: false });
+    currentUser = { id, name, email, phone, role: 'landlord' };
+    saveSession(currentUser); await launchApp();
+  } catch(e) {
+    showError('reg-error', 'Connection error. Check your internet and try again.');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Create Account — Free to Start';
+  }
+}
+window.doRegister = doRegister;
+
+function doLogout() {
+  clearSession(); currentUser = null; adminViewingId = null; hideSubGate();
+  document.getElementById('appWrap').classList.remove('active');
+  document.getElementById('loginScreen').classList.add('active');
+  document.getElementById('registerScreen').classList.remove('active');
+  document.getElementById('loadingScreen').classList.add('hide');
+}
+window.doLogout = doLogout;
+
+async function launchApp() {
+  document.getElementById('loginScreen').classList.remove('active');
+  document.getElementById('registerScreen').classList.remove('active');
+  document.getElementById('loadingScreen').classList.remove('hide');
+  
+  await loadUserData();
+  document.getElementById('loadingScreen').classList.add('hide');
+  document.getElementById('appWrap').classList.add('active');
+  const isAdmin = currentUser.role === 'admin';
+  document.getElementById('sidebar-avatar').textContent = initials(currentUser.name);
+  document.getElementById('sidebar-name').textContent = currentUser.name;
+  document.getElementById('sidebar-email').textContent = currentUser.email;
+  document.getElementById('sidebar-role-tag').textContent = isAdmin ? '⚡ Administrator' : 'Landlord';
+  document.getElementById('adminSwitcher').style.display = isAdmin ? 'block' : 'none';
+  document.getElementById('adminBar').style.display = isAdmin ? 'flex' : 'none';
+  document.getElementById('admin-nav-section').style.display = isAdmin ? 'block' : 'none';
+  document.getElementById('nav-subscriptions').style.display = isAdmin ? 'flex' : 'none';
+  document.getElementById('nav-admin-users').style.display = isAdmin ? 'flex' : 'none';
+  document.getElementById('nav-launch').style.display = isAdmin ? 'flex' : 'none';
+  document.getElementById('live-url').textContent = window.location.hostname !== 'localhost' ? window.location.hostname : 'your-app.vercel.app';
+  if (isAdmin) { renderLandlordSwitcher(); }
+  renderAll();
+  if (!isAdmin) setTimeout(() => checkSubGate(), 500);
+  toast(`Welcome back, ${currentUser.name.split(' ')[0]}! 👋`);
+}
+
+// ============================================================
+// DATA LAYER — Firebase
+// ============================================================
+async function loadUserData() {
+  const uid = (currentUser.role === 'admin' && adminViewingId) ? adminViewingId : currentUser.id;
+  if (currentUser.role === 'admin' && !adminViewingId) {
+    const allUsers = await fsGetAllUsers();
+    const entries = Object.entries(allUsers);
+    const allData = await Promise.all(entries.map(([uid2]) => fsGetData(uid2)));
+    const allUnits = [], allPays = [];
+    entries.forEach(([, u], i) => {
+      const d = allData[i];
+      (d.units || []).forEach(unit => allUnits.push({ ...unit, _ownerName: u.name }));
+      (d.payments || []).forEach(p => allPays.push(p));
+    });
+    S = { units: allUnits, payments: allPays, month: S.month || new Date().toISOString().slice(0, 7) };
+  } else {
+    const d = await fsGetData(uid);
+    S = { units: d.units || [], payments: d.payments || [], month: S.month || new Date().toISOString().slice(0, 7) };
+  }
+}
+
+async function save() {
+  const uid = (currentUser.role === 'admin' && adminViewingId) ? adminViewingId : currentUser.id;
+  if (currentUser.role === 'admin' && !adminViewingId) return; // don't save aggregate view
+  try {
+    await fsSetData(uid, { units: S.units, payments: S.payments });
+  } catch(e) {
+    console.error('Firebase save failed:', e);
+    toast('⚠️ Save failed — check your internet or Firestore rules', 'error');
+    throw e; // re-throw so callers know it failed
+  }
+}
+
+async function setLandlord(id) {
+  adminViewingId = id;
+  document.getElementById('ls-dropdown').classList.remove('open');
+  document.getElementById('ls-arrow').classList.remove('open');
+  const label = id ? (allUsersCache[id]?.name || 'Unknown') : 'All Landlords';
+  document.getElementById('ls-current-name').textContent = label;
+  document.getElementById('admin-viewing-label').textContent = label;
+  document.getElementById('admin-switch-back').style.display = id ? 'inline' : 'none';
+  document.getElementById('loadingScreen').classList.remove('hide');
+  document.getElementById('loadingScreen').querySelector('.loading-text').textContent = 'Switching view...';
+  await loadUserData();
+  document.getElementById('loadingScreen').classList.add('hide');
+  renderLandlordSwitcher(); renderAll();
+}
+window.setLandlord = setLandlord;
+
+function toggleLandlordDropdown() {
+  const dd = document.getElementById('ls-dropdown');
+  const arrow = document.getElementById('ls-arrow');
+  dd.classList.toggle('open'); arrow.classList.toggle('open');
+}
+window.toggleLandlordDropdown = toggleLandlordDropdown;
+
+document.addEventListener('click', e => {
+  const sw = document.getElementById('adminSwitcher');
+  if (sw && !sw.contains(e.target)) { document.getElementById('ls-dropdown').classList.remove('open'); document.getElementById('ls-arrow').classList.remove('open'); }
+});
+
+function renderLandlordSwitcher() {
+  const dd = document.getElementById('ls-dropdown');
+  const users = allUsersCache;
+  let html = Object.values(users).map(u => {
+    return `<div class="ls-option ${adminViewingId == u.id ? 'active' : ''}" onclick="setLandlord('${u.id}')"><div class="ls-avatar">${initials(u.name)}</div><div><div>${u.name}</div><div class="ls-option-sub">${u.email}</div></div></div>`;
+  }).join('');
+  html += `<div class="ls-option ${!adminViewingId ? 'active' : ''}" onclick="setLandlord(null)" style="border-top:1px solid var(--border)"><div class="ls-avatar" style="background:var(--surface)">★</div><div><div>All Landlords</div><div class="ls-option-sub">Aggregate view</div></div></div>`;
+  dd.innerHTML = html;
+  document.getElementById('users-count').textContent = Object.keys(users).length;
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function today() { return new Date().toISOString().slice(0, 10); }
+function fmtMonth(m) { if (!m) return ''; const [y, mo] = m.split('-'); return new Date(y, mo - 1).toLocaleDateString('en-KE', { month: 'long', year: 'numeric' }); }
+function fmtDate(d) { if (!d) return '—'; return new Date(d + 'T12:00:00').toLocaleDateString('en-KE', { day: 'numeric', month: 'short', year: 'numeric' }); }
+function initials(n) { if (!n) return '?'; return n.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase(); }
+function uid() { return 'id_' + Date.now() + '_' + Math.floor(Math.random() * 1000); }
+function getPaid(unitId, month) { return S.payments.filter(p => p.unitId === unitId && p.month === month).reduce((s, p) => s + p.amount, 0); }
+
+function getStatus(u, m) {
+  if (u.locked) return 'locked';
+  if (!u.tenant) return 'vacant';
+  const p = getPaid(u.id, m);
+  if (p >= u.rent) return 'paid';
+  if (p > 0) return 'partial';
+  return 'arrears';
+}
+
+function badge(s) {
+  const map = { paid: ['b-paid','✓ Paid'], arrears: ['b-arrears','Arrears'], partial: ['b-partial','Partial'], vacant: ['b-vacant','Vacant'], locked: ['b-locked-unit','🔒 Locked'] };
+  const [c, l] = map[s] || ['b-vacant', '—'];
+  return `<span class="badge ${c}">${s === 'paid' || s === 'locked' ? '' : '<span class="blink"></span>'}${l}</span>`;
+}
+function methodBadge(m) { return `<span class="badge ${m === 'M-Pesa' ? 'b-method' : 'b-cash'}">${m}</span>`; }
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+document.querySelectorAll('.nav-item[data-page]').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    this.classList.add('active');
+    const pg = this.dataset.page;
+    document.getElementById('page-' + pg).classList.add('active');
+    const titles = { dashboard: 'Dashboard', mpesa: 'M-Pesa Collections', units: 'Units', payments: 'Payments', arrears: 'Arrears', reminders: 'Reminders', subscriptions: 'Subscriptions', 'admin-users': 'All Landlords', launch: 'Launch Guide' };
+    document.getElementById('page-title').textContent = titles[pg] || pg;
+    if (pg === 'payments') renderMonthFilters();
+    if (pg === 'reminders') renderReminders();
+    if (pg === 'admin-users') renderAdminUsers();
+    if (pg === 'subscriptions') renderSubscriptions();
+  });
+});
+
+// ============================================================
+// MODALS
+// ============================================================
+function openModal(id) {
+  if (id === 'unitModal') {
+    document.getElementById('unit-modal-title').textContent = 'Add New Unit';
+    document.getElementById('unit-modal-btn').textContent = 'Add Unit';
+    document.getElementById('u-id').value = '';
+    ['u-name','u-rent','u-property','u-tenant','u-phone','u-notes'].forEach(f => document.getElementById(f).value = '');
+    document.getElementById('u-movein').value = '';
+  }
+  if (id === 'paymentModal') {
+    document.getElementById('pay-modal-title').textContent = 'Log Payment';
+    document.getElementById('pay-modal-btn').textContent = 'Log Payment';
+    document.getElementById('p-id').value = '';
+    document.getElementById('p-date').value = today();
+    document.getElementById('p-month').value = S.month;
+    document.getElementById('p-note').value = '';
+    document.getElementById('p-amount').value = '';
+    const sel = document.getElementById('p-unit');
+    sel.innerHTML = '<option value="">— Select unit —</option>' + S.units.map(u => `<option value="${u.id}">${u.name}${u.tenant ? ' — ' + u.tenant : ''}</option>`).join('');
+  }
+  document.getElementById(id).classList.add('open');
+}
+window.openModal = openModal;
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+window.closeModal = closeModal;
+document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); }));
+function prefillRent() {
+  const u = S.units.find(x => x.id == document.getElementById('p-unit').value);
+  if (u && !document.getElementById('p-amount').value) document.getElementById('p-amount').value = u.rent;
+}
+window.prefillRent = prefillRent;
+
+// ============================================================
+// TOAST
+// ============================================================
+function toast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast show' + (type ? ' ' + type : '');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ============================================================
+// CRUD — UNITS
+// ============================================================
+async function saveUnit() {
+  const name = document.getElementById('u-name').value.trim();
+  const rent = parseFloat(document.getElementById('u-rent').value);
+  if (!name || !rent) return toast('Unit name and rent required', 'error');
+  const id = document.getElementById('u-id').value;
+  const data = { name, rent, property: document.getElementById('u-property').value.trim(), tenant: document.getElementById('u-tenant').value.trim(), phone: document.getElementById('u-phone').value.trim(), movein: document.getElementById('u-movein').value, notes: document.getElementById('u-notes').value.trim() };
+  if (id) {
+    const idx = S.units.findIndex(u => u.id == id);
+    if (idx > -1) S.units[idx] = { ...S.units[idx], ...data };
+    toast(`Unit "${name}" updated`);
+  } else {
+    S.units.push({ id: uid(), ...data, locked: false });
+    toast(`Unit "${name}" added`);
+  }
+  await save(); closeModal('unitModal'); renderAll();
+}
+window.saveUnit = saveUnit;
+
+function editUnit(id) {
+  const u = S.units.find(x => x.id == id); if (!u) return;
+  document.getElementById('unit-modal-title').textContent = 'Edit Unit';
+  document.getElementById('unit-modal-btn').textContent = 'Save Changes';
+  document.getElementById('u-id').value = u.id;
+  document.getElementById('u-name').value = u.name || '';
+  document.getElementById('u-rent').value = u.rent || '';
+  document.getElementById('u-property').value = u.property || '';
+  document.getElementById('u-tenant').value = u.tenant || '';
+  document.getElementById('u-phone').value = u.phone || '';
+  document.getElementById('u-movein').value = u.movein || '';
+  document.getElementById('u-notes').value = u.notes || '';
+  document.getElementById('unitModal').classList.add('open');
+}
+window.editUnit = editUnit;
+
+function deleteUnit(id) {
+  const u = S.units.find(x => x.id == id); if (!u) return;
+  showConfirm(`Delete unit "<strong>${u.name}</strong>"? This cannot be undone.`, async () => {
+    S.units = S.units.filter(x => x.id !== id);
+    S.payments = S.payments.filter(p => p.unitId !== id);
+    await save(); toast(`Unit "${u.name}" deleted`); renderAll();
+  });
+}
+window.deleteUnit = deleteUnit;
+
+function vacateUnit(id) {
+  const u = S.units.find(x => x.id == id); if (!u) return;
+  showConfirm(`Move out "<strong>${u.tenant}</strong>" from ${u.name}?`, async () => {
+    u.tenant = ''; u.phone = ''; u.movein = '';
+    await save(); toast(`${u.name} is now vacant`); renderAll();
+  });
+}
+window.vacateUnit = vacateUnit;
+
+function lockUnit(id) {
+  const u = S.units.find(x => x.id == id); if (!u) return;
+  showConfirm(`Lock unit <strong>${u.name}</strong>${u.tenant ? ' — tenant: <strong>' + u.tenant + '</strong>' : ''}?`, async () => {
+    u.locked = true;
+    await save(); toast(`Unit ${u.name} locked 🔒`, 'error'); renderAll();
+  });
+}
+window.lockUnit = lockUnit;
+
+function unlockUnit(id) {
+  const u = S.units.find(x => x.id == id); if (!u) return;
+  u.locked = false;
+  save().then(() => { toast(`Unit ${u.name} unlocked ✓`); renderAll(); });
+}
+window.unlockUnit = unlockUnit;
+
+// ============================================================
+// CRUD — PAYMENTS
+// ============================================================
+async function savePayment() {
+  const unitId = document.getElementById('p-unit').value;
+  const amount = parseFloat(document.getElementById('p-amount').value);
+  const date = document.getElementById('p-date').value;
+  const month = document.getElementById('p-month').value || S.month;
+  if (!unitId || !amount || !date) return toast('Fill unit, amount and date', 'error');
+  const u = S.units.find(x => x.id == unitId);
+  const id = document.getElementById('p-id').value;
+  const data = { unitId, amount, date, month, method: document.getElementById('p-method').value, note: document.getElementById('p-note').value.trim(), tenant: u?.tenant || '' };
+  if (id) {
+    const idx = S.payments.findIndex(p => p.id == id);
+    if (idx > -1) S.payments[idx] = { ...S.payments[idx], ...data };
+    toast('Payment updated');
+  } else {
+    S.payments.push({ id: uid(), ...data });
+    toast(`KSH ${amount.toLocaleString()} logged`);
+  }
+  await save(); closeModal('paymentModal'); renderAll();
+}
+window.savePayment = savePayment;
+
+function editPayment(id) {
+  const p = S.payments.find(x => x.id == id); if (!p) return;
+  document.getElementById('pay-modal-title').textContent = 'Edit Payment';
+  document.getElementById('pay-modal-btn').textContent = 'Save Changes';
+  document.getElementById('p-id').value = p.id;
+  const sel = document.getElementById('p-unit');
+  sel.innerHTML = '<option value="">— Select unit —</option>' + S.units.map(u => `<option value="${u.id}">${u.name}${u.tenant ? ' — ' + u.tenant : ''}</option>`).join('');
+  sel.value = p.unitId;
+  document.getElementById('p-amount').value = p.amount;
+  document.getElementById('p-date').value = p.date;
+  document.getElementById('p-method').value = p.method;
+  document.getElementById('p-note').value = p.note || '';
+  document.getElementById('p-month').value = p.month || S.month;
+  document.getElementById('paymentModal').classList.add('open');
+}
+window.editPayment = editPayment;
+
+function deletePayment(id) {
+  showConfirm('Delete this payment record?', async () => {
+    S.payments = S.payments.filter(x => x.id !== id);
+    await save(); toast('Payment deleted'); renderAll();
+  });
+}
+window.deletePayment = deletePayment;
+
+function quickPay(unitId) {
+  qpUnitId = unitId;
+  const u = S.units.find(x => x.id === unitId);
+  document.getElementById('qp-title').textContent = `Log Payment — ${u.name}`;
+  document.getElementById('qp-amount').value = u.rent;
+  document.getElementById('qp-note').value = '';
+  document.getElementById('qp-month').value = S.month;
+  document.getElementById('quickModal').classList.add('open');
+}
+window.quickPay = quickPay;
+
+async function confirmQuickPay() {
+  const amount = parseFloat(document.getElementById('qp-amount').value);
+  if (!amount) return toast('Enter amount', 'error');
+  const u = S.units.find(x => x.id === qpUnitId);
+  const month = document.getElementById('qp-month').value || S.month;
+  S.payments.push({ id: uid(), unitId: qpUnitId, amount, date: today(), month, method: document.getElementById('qp-method').value, note: document.getElementById('qp-note').value.trim(), tenant: u?.tenant || '' });
+  await save(); closeModal('quickModal'); toast(`KSH ${amount.toLocaleString()} logged for ${u.name}`); renderAll();
+}
+window.confirmQuickPay = confirmQuickPay;
+
+function showConfirm(msg, cb) {
+  document.getElementById('confirm-msg').innerHTML = msg;
+  const btn = document.getElementById('confirm-ok-btn');
+  btn.onclick = () => { cb(); closeModal('confirmModal'); };
+  document.getElementById('confirmModal').classList.add('open');
+}
+window.showConfirm = showConfirm;
+
+// ============================================================
+// RENDER ALL
+// ============================================================
+function renderAll() {
+  updateWelcome(); renderStats(); renderDash(); renderMpesa(); renderUnits();
+  renderPayments(); renderArrears(); updateBadges(); updateSidebar();
+  if (currentUser?.role === 'admin') renderLandlordSwitcher();
+}
+
+function updateWelcome() {
+  if (!currentUser) return;
+  const name = currentUser.name.split(' ')[0];
+  document.getElementById('welcome-avatar').textContent = initials(currentUser.name);
+  document.getElementById('welcome-greeting').textContent = `Good to see you, ${name}!`;
+  const lockedCount = S.units.filter(u => u.locked).length;
+  const lockedNote = lockedCount ? ` · ${lockedCount} unit${lockedCount > 1 ? 's' : ''} locked 🔒` : '';
+  document.getElementById('welcome-sub').textContent = `You have ${S.units.length} unit${S.units.length !== 1 ? 's' : ''} registered for ${fmtMonth(S.month)}.${lockedNote}`;
+}
+
+function updateBadges() {
+  const m = S.month;
+  const arrCount = S.units.filter(u => u.tenant && !u.locked && getStatus(u, m) === 'arrears').length;
+  document.getElementById('arrears-badge').textContent = arrCount;
+  document.getElementById('arrears-badge').style.display = arrCount ? 'inline' : 'none';
+  const mpCount = S.payments.filter(p => p.month === m && p.method === 'M-Pesa').length;
+  document.getElementById('mpesa-badge').textContent = mpCount;
+  const remCount = S.units.filter(u => u.tenant && !u.locked && getStatus(u, m) !== 'paid' && getStatus(u, m) !== 'vacant').length;
+  document.getElementById('reminders-badge').textContent = remCount;
+  document.getElementById('reminders-badge').style.display = remCount ? 'inline' : 'none';
+}
+
+function renderStats() {
+  const m = S.month;
+  const occ = S.units.filter(u => u.tenant && !u.locked);
+  const exp = occ.reduce((s, u) => s + u.rent, 0);
+  const col = occ.reduce((s, u) => s + getPaid(u.id, m), 0);
+  const out = exp - col;
+  const arr = occ.filter(u => getStatus(u, m) === 'arrears').length;
+  const occPct = S.units.length ? Math.round(occ.length / S.units.length * 100) : 0;
+  const pct = exp ? Math.round(col / exp * 100) : 0;
+  document.getElementById('stat-expected').textContent = 'KSH ' + exp.toLocaleString();
+  document.getElementById('stat-collected').textContent = 'KSH ' + col.toLocaleString();
+  document.getElementById('stat-outstanding').textContent = 'KSH ' + out.toLocaleString();
+  document.getElementById('stat-occupancy').textContent = occPct + '%';
+  document.getElementById('stat-pct').textContent = pct + '%';
+  document.getElementById('stat-arrears-badge').textContent = arr;
+  document.getElementById('stat-units-sub').textContent = occ.length + ' / ' + S.units.length + ' units occupied';
+  document.getElementById('collect-fill').style.width = pct + '%';
+  document.getElementById('dash-month-label').textContent = fmtMonth(m);
+  document.getElementById('topbar-month').textContent = fmtMonth(m);
+}
+
+function renderDash() {
+  const m = S.month;
+  const tb = document.getElementById('dash-tbody');
+  if (!S.units.length) { tb.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="empty-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div><h3>No units yet</h3><p>Click "Add Unit" to get started</p></div></td></tr>`; return; }
+  tb.innerHTML = S.units.map(u => {
+    const st = getStatus(u, m);
+    const paid = u.locked ? 0 : getPaid(u.id, m);
+    const bal = u.locked ? 0 : Math.max(0, u.rent - paid);
+    const isLocked = u.locked;
+    const owner = u._ownerName ? `<div style="font-size:10px;color:var(--text3);font-family:var(--mono)">${u._ownerName}</div>` : '';
+    const labelClass = isLocked ? 'unit-label locked-label' : 'unit-label';
+    return `<tr class="${isLocked ? 'row-locked' : ''}">
+      <td><span class="${labelClass}">${isLocked ? '🔒 ' : ''}${u.name}</span>${owner}</td>
+      <td style="color:var(--text2);font-size:11px">${u.property || '—'}</td>
+      <td>${u.tenant ? `<div style="font-weight:600;font-size:12px">${u.tenant}</div><div style="font-size:10px;color:var(--text3)">${u.phone || ''}</div>` : `<span style="color:var(--text3);font-style:italic;font-size:11px">Vacant</span>`}</td>
+      <td style="font-family:var(--mono);font-weight:600;font-size:12px">${u.rent.toLocaleString()}</td>
+      <td>${badge(st)}</td>
+      <td style="font-family:var(--mono);color:var(--mpesa-bright);font-size:12px">${paid > 0 ? paid.toLocaleString() : '—'}</td>
+      <td style="font-family:var(--mono);color:${bal > 0 ? 'var(--red)' : 'var(--text3)'};font-size:12px">${bal > 0 ? bal.toLocaleString() : '—'}</td>
+      <td><div style="display:flex;gap:4px;flex-wrap:wrap">
+        ${!isLocked && st !== 'paid' && u.tenant ? `<button class="btn btn-pay btn-sm" onclick="quickPay('${u.id}')">Pay</button>` : ''}
+        <button class="btn btn-edit btn-sm" onclick="editUnit('${u.id}')">Edit</button>
+        ${isLocked ? `<button class="btn btn-unlock btn-sm" onclick="unlockUnit('${u.id}')">Unlock</button>` : `<button class="btn btn-lock btn-sm" onclick="lockUnit('${u.id}')">Lock</button>`}
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderMpesa() {
+  const m = S.month;
+  const occ = S.units.filter(u => u.tenant && !u.locked);
+  const exp = occ.reduce((s, u) => s + u.rent, 0);
+  const allPay = S.payments.filter(p => p.month === m);
+  const mpPay = allPay.filter(p => p.method === 'M-Pesa');
+  const allTotal = allPay.reduce((s, p) => s + p.amount, 0);
+  const paidU = occ.filter(u => getStatus(u, m) === 'paid').length;
+  const rate = exp ? Math.round(allTotal / exp * 100) : 0;
+  document.getElementById('mp-collected').textContent = 'KSH ' + allTotal.toLocaleString();
+  document.getElementById('mp-txns').textContent = mpPay.length;
+  document.getElementById('mp-pending').textContent = 'KSH ' + Math.max(0, exp - allTotal).toLocaleString();
+  document.getElementById('mp-rate').textContent = rate + '%';
+  document.getElementById('mp-bar-label').textContent = paidU + ' / ' + occ.length + ' units paid';
+  document.getElementById('mp-progress-fill').style.width = rate + '%';
+  const recent = [...S.payments].filter(p => p.method === 'M-Pesa').sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5);
+  document.getElementById('mp-txn-list').innerHTML = recent.length ? recent.map(p => {
+    const u = S.units.find(x => x.id === p.unitId);
+    return `<div class="txn-row"><div class="txn-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00A651" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div><div class="txn-info"><div class="txn-name">${p.tenant || 'Unknown'}${u ? ' · ' + u.name : ''}</div><div class="txn-ref">${p.note || 'No ref'} · ${fmtDate(p.date)}</div></div><div class="txn-amount">+${p.amount.toLocaleString()}</div></div>`;
+  }).join('') : '<div style="color:var(--text3);font-size:12px;padding:10px 0">No M-Pesa payments yet</div>';
+  const sorted = [...S.payments].sort((a, b) => b.date.localeCompare(a.date));
+  document.getElementById('mp-table-body').innerHTML = sorted.length ? sorted.map(p => {
+    const u = S.units.find(x => x.id === p.unitId);
+    return `<tr><td style="font-family:var(--mono);font-size:10px">${fmtDate(p.date)}</td><td>${u ? `<span class="unit-label">${u.name}</span>` : '—'}</td><td style="font-weight:600;font-size:12px">${p.tenant || '—'}</td><td style="font-family:var(--mono);font-weight:700;color:var(--mpesa-bright);font-size:12px">KSH ${p.amount.toLocaleString()}</td><td>${methodBadge(p.method)}</td><td style="font-family:var(--mono);font-size:10px;color:var(--text3)">${p.note || '—'}</td><td><div style="display:flex;gap:4px"><button class="btn btn-edit btn-sm" onclick="editPayment('${p.id}')">Edit</button><button class="btn btn-danger btn-sm" onclick="deletePayment('${p.id}')">Del</button></div></td></tr>`;
+  }).join('') : `<tr><td colspan="7"><div class="empty-state"><h3>No payments yet</h3></div></td></tr>`;
+}
+
+function renderUnits() {
+  const g = document.getElementById('unit-grid');
+  const m = S.month;
+  let units = [...S.units];
+  const search = (document.getElementById('unit-search')?.value || '').toLowerCase();
+  const sf = document.getElementById('unit-status-filter')?.value || '';
+  if (search) units = units.filter(u => (u.name + u.tenant + u.property).toLowerCase().includes(search));
+  if (sf === 'occupied') units = units.filter(u => !!u.tenant && !u.locked);
+  if (sf === 'vacant') units = units.filter(u => !u.tenant && !u.locked);
+  if (sf === 'locked') units = units.filter(u => !!u.locked);
+  if (!units.length) { g.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><h3>No units found</h3><p>Add your first unit to get started</p></div>`; return; }
+  g.innerHTML = units.map(u => {
+    const st = getStatus(u, m);
+    const isLocked = u.locked;
+    const occ = !!u.tenant && !isLocked;
+    const paid = isLocked ? 0 : getPaid(u.id, m);
+    const bal = isLocked ? 0 : Math.max(0, u.rent - paid);
+    return `<div class="unit-card ${isLocked ? 'unit-locked' : occ ? 'occupied' : ''}">
+      <div class="unit-card-header"><div><div class="unit-number-big">${isLocked ? '🔒 ' : ''}${u.name}</div><div class="unit-prop">${u.property || 'No property'}</div></div>${badge(st)}</div>
+      <div class="unit-rent-display">KSH ${u.rent.toLocaleString()}</div>
+      <div class="unit-rent-label">per month</div>
+      ${isLocked ? `<div class="locked-banner"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Unit locked — access restricted</div>`
+        : occ ? `<div class="unit-tenant-row"><div class="avatar">${initials(u.tenant)}</div><div class="tenant-info"><p>${u.tenant}</p><p>${u.phone || 'No phone'}</p></div></div>`
+        : `<div style="padding:8px;background:var(--surface);border-radius:8px;color:var(--text3);font-size:11px;margin-top:8px;text-align:center">Unit is vacant</div>`}
+      ${occ && st !== 'paid' && !isLocked ? `<div style="font-size:10px;color:var(--red);font-family:var(--mono);margin-top:6px">Balance: KSH ${bal.toLocaleString()}</div>` : ''}
+      <div class="unit-actions">
+        ${!isLocked && st !== 'paid' && occ ? `<button class="btn btn-pay btn-sm" onclick="quickPay('${u.id}')">Log Pay</button>` : ''}
+        <button class="btn btn-edit btn-sm" onclick="editUnit('${u.id}')">Edit</button>
+        ${!isLocked && occ ? `<button class="btn btn-ghost btn-sm" onclick="vacateUnit('${u.id}')">Vacate</button>` : ''}
+        ${isLocked ? `<button class="btn btn-unlock btn-sm" onclick="unlockUnit('${u.id}')">🔓 Unlock</button>` : `<button class="btn btn-lock btn-sm" onclick="lockUnit('${u.id}')">🔒 Lock</button>`}
+        <button class="btn btn-danger btn-sm" onclick="deleteUnit('${u.id}')">Del</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderMonthFilters() {
+  const months = [...new Set([S.month, ...S.payments.map(p => p.month)])].sort().reverse();
+  const el = document.getElementById('month-filters');
+  el.innerHTML = '<span style="font-size:10px;color:var(--text3);font-family:var(--mono);margin-right:4px">MONTH:</span>' +
+    months.map(m => `<button class="month-pill ${m === S.month ? 'active' : ''}" onclick="setMonth('${m}',this)">${fmtMonth(m)}</button>`).join('');
+}
+
+async function setMonth(m, el) {
+  S.month = m;
+  document.querySelectorAll('.month-pill').forEach(p => p.classList.remove('active'));
+  if (el) el.classList.add('active');
+  renderAll();
+}
+window.setMonth = setMonth;
+
+function renderPayments() {
+  const pays = S.payments.filter(p => p.month === S.month).sort((a, b) => b.date.localeCompare(a.date));
+  document.getElementById('pay-tbody').innerHTML = pays.length ? pays.map(p => {
+    const u = S.units.find(x => x.id === p.unitId);
+    return `<tr><td style="font-family:var(--mono);font-size:10px">${fmtDate(p.date)}</td><td>${u ? `<span class="unit-label">${u.name}</span>` : '—'}</td><td style="font-weight:600;font-size:12px">${p.tenant || '—'}</td><td style="font-family:var(--mono);font-weight:700;color:var(--mpesa-bright);font-size:12px">KSH ${p.amount.toLocaleString()}</td><td>${methodBadge(p.method)}</td><td style="font-family:var(--mono);font-size:10px;color:var(--text3)">${p.note || '—'}</td><td><div style="display:flex;gap:4px"><button class="btn btn-edit btn-sm" onclick="editPayment('${p.id}')">Edit</button><button class="btn btn-danger btn-sm" onclick="deletePayment('${p.id}')">Del</button></div></td></tr>`;
+  }).join('') : `<tr><td colspan="7"><div class="empty-state"><h3>No payments this month</h3></div></td></tr>`;
+}
+
+function renderArrears() {
+  const m = S.month;
+  const arr = S.units.filter(u => u.tenant && !u.locked && getStatus(u, m) !== 'paid' && getStatus(u, m) !== 'vacant');
+  document.getElementById('arrears-month-label').textContent = fmtMonth(m);
+  const c = document.getElementById('arrears-container');
+  if (!arr.length) { c.innerHTML = `<div class="empty-state"><div class="empty-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--mpesa)" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg></div><h3>All clear!</h3><p>No tenants in arrears this month</p></div>`; return; }
+  c.innerHTML = arr.map(u => {
+    const paid = getPaid(u.id, m); const owed = u.rent - paid; const pct = Math.round(paid / u.rent * 100);
+    return `<div class="arrear-card"><div><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span class="unit-label">${u.name}</span>${u.property ? `<span style="font-size:10px;color:var(--text3)">${u.property}</span>` : ''}</div><div style="font-size:14px;font-weight:700">${u.tenant}</div><div style="font-size:11px;color:var(--text3)">${u.phone || 'No phone'}</div><div class="arrear-owed">KSH ${owed.toLocaleString()} owed</div></div><div style="width:130px"><div class="recovery-label"><span>Recovered</span><span>${pct}%</span></div><div class="recovery-bar"><div class="recovery-fill" style="width:${pct}%"></div></div><div style="margin-top:8px;display:flex;gap:5px"><button class="btn btn-pay btn-sm" onclick="quickPay('${u.id}')">Log Payment</button><button class="btn btn-lock btn-sm" onclick="lockUnit('${u.id}')">Lock</button></div></div></div>`;
+  }).join('');
+}
+
+function renderReminders() {
+  const m = S.month;
+  document.getElementById('reminder-month-label').textContent = fmtMonth(m);
+  const pending = S.units.filter(u => u.tenant && !u.locked && getStatus(u, m) !== 'paid' && getStatus(u, m) !== 'vacant');
+  const c = document.getElementById('reminders-container');
+  if (!pending.length) { c.innerHTML = `<div class="empty-state"><h3>No reminders needed</h3><p>All tenants have paid for ${fmtMonth(m)}</p></div>`; return; }
+  c.innerHTML = pending.map(u => {
+    const paid = getPaid(u.id, m); const owed = u.rent - paid; const st = getStatus(u, m);
+    const msg = `Hello ${u.tenant}, this is a reminder that your rent for ${fmtMonth(m)} is ${st === 'partial' ? 'partially paid. Balance due' : 'due'}. Amount: KSH ${owed.toLocaleString()}. Please pay via M-Pesa. Thank you.`;
+    const wa = `https://wa.me/${(u.phone || '').replace(/[^0-9]/g, '').replace(/^0/, '254')}?text=${encodeURIComponent(msg)}`;
+    return `<div class="reminder-card"><div class="reminder-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div><div class="reminder-info"><div class="reminder-name">${u.tenant} · <span class="unit-label" style="font-size:9px">${u.name}</span></div><div class="reminder-detail">${u.phone || 'No phone'} · ${u.property || ''}</div></div><div><div class="reminder-amount">KSH ${owed.toLocaleString()}</div><div style="display:flex;gap:5px;margin-top:6px;flex-wrap:wrap">${u.phone ? `<a href="${wa}" target="_blank" class="btn btn-primary btn-sm" style="text-decoration:none">WhatsApp</a>` : ''}<button class="btn btn-ghost btn-sm" onclick="navigator.clipboard.writeText(\`${msg.replace(/`/g,"'")}\`).then(()=>toast('Copied!'))">Copy</button><button class="btn btn-pay btn-sm" onclick="quickPay('${u.id}')">Pay</button><button class="btn btn-lock btn-sm" onclick="lockUnit('${u.id}')">Lock</button></div></div></div>`;
+  }).join('');
+}
+
+async function renderSubscriptions() {
+  const [users, subs] = await Promise.all([fsGetAllUsers(), fsGetAllSubs()]);
+  const list = Object.values(users);
+  const m = thisMonth();
+  const allData = await Promise.all(list.map(u => fsGetData(u.id)));
+  let totalRevenue = 0, activeCount = 0, unpaidCount = 0;
+  const rows = [];
+  list.forEach((u, i) => {
+    const d = allData[i];
+    const units = (d.units || []).length;
+    const amount = units * PLATFORM_FEE;
+    const sub = subs[u.id] || {};
+    const status = getSubStatus(sub);
+    if (status === 'active' || status === 'grace') { totalRevenue += sub.amount || 0; activeCount++; }
+    else unpaidCount++;
+    const statusBadge = status === 'active' ? '<span class="badge b-active">Active</span>' : status === 'grace' ? '<span class="badge b-grace">Grace</span>' : '<span class="badge b-locked">Unpaid</span>';
+    const waMsg = `Hello ${u.name}, your RentEase subscription for ${fmtMonth(m)} is due. Amount: KSH ${amount.toLocaleString()} (${units} units × KSH ${PLATFORM_FEE}). Please send to ${ADMIN_PHONE}. Thank you.`;
+    const wa = `https://wa.me/${(u.phone || '').replace(/[^0-9]/g, '').replace(/^0/, '254')}?text=${encodeURIComponent(waMsg)}`;
+    rows.push(`<div class="landlord-sub-row"><div class="user-avatar" style="width:36px;height:36px;border-radius:9px;background:var(--mpesa-glow);border:1px solid var(--border-green);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--mpesa-bright);flex-shrink:0">${initials(u.name)}</div><div class="landlord-sub-info"><div class="landlord-sub-name">${u.name}</div><div class="landlord-sub-detail">${u.email} · ${units} unit${units !== 1 ? 's' : ''} · ${u.phone || 'No phone'}</div>${sub.paidAt ? `<div class="landlord-sub-detail">Last paid: ${fmtDate(sub.paidAt?.slice(0,10))}</div>` : '<div class="landlord-sub-detail" style="color:var(--red)">Never paid</div>'}</div><div><div class="landlord-sub-amount">KSH ${amount.toLocaleString()}</div><div class="landlord-sub-amount-label">${units} × ${PLATFORM_FEE}/mo</div></div><div style="margin-right:10px">${statusBadge}</div><div style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn btn-pay btn-sm" onclick="markSubPaid('${u.id}')">✓ Mark Paid</button>${status !== 'active' ? `<button class="btn btn-danger btn-sm" onclick="lockAccount('${u.id}')">Lock</button>` : `<button class="btn btn-amber btn-sm" onclick="unlockAccount('${u.id}')">Unlock</button>`}${u.phone ? `<a href="${wa}" target="_blank" class="btn btn-ghost btn-sm" style="text-decoration:none">WA</a>` : ''}</div></div>`);
+  });
+  document.getElementById('sub-total-revenue').textContent = 'KSH ' + totalRevenue.toLocaleString();
+  document.getElementById('sub-active-count').textContent = activeCount;
+  document.getElementById('sub-unpaid-count').textContent = unpaidCount;
+  document.getElementById('sub-landlord-list').innerHTML = list.length ? rows.join('') : `<div class="empty-state"><h3>No landlords yet</h3></div>`;
+}
+window.renderSubscriptions = renderSubscriptions;
+
+async function renderAdminUsers() {
+  const users = await fsGetAllUsers();
+  const list = Object.values(users);
+  const m = S.month;
+  document.getElementById('landlord-count-label').textContent = list.length + ' accounts';
+  document.getElementById('users-count').textContent = list.length;
+  const el = document.getElementById('admin-users-list');
+  if (!list.length) { el.innerHTML = `<div class="empty-state"><h3>No landlords registered yet</h3></div>`; return; }
+  const [allData, allSubs] = await Promise.all([
+    Promise.all(list.map(u => fsGetData(u.id))),
+    Promise.all(list.map(u => fsGetSub(u.id)))
+  ]);
+  const rows = [];
+  list.forEach((u, i) => {
+    const d = allData[i];
+    const units = (d.units || []).length;
+    const pays = (d.payments || []).filter(p => p.month === m);
+    const col = pays.reduce((s, p) => s + p.amount, 0);
+    const sub = allSubs[i];
+    const status = getSubStatus(sub);
+    const statusBadge = status === 'active' ? '<span class="badge b-active">Active</span>' : status === 'grace' ? '<span class="badge b-grace">Grace</span>' : '<span class="badge b-locked">Locked</span>';
+    rows.push(`<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border)"><div class="user-avatar" style="width:36px;height:36px;border-radius:9px;background:var(--mpesa-glow);border:1px solid var(--border-green);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--mpesa-bright);flex-shrink:0">${initials(u.name)}</div><div style="flex:1"><div style="font-size:13px;font-weight:700">${u.name}</div><div style="font-size:11px;color:var(--text3);font-family:var(--mono)">${u.email} · ${u.phone || 'No phone'}</div></div><div style="text-align:center;padding:0 12px"><div style="font-size:18px;font-weight:800;font-family:var(--mono)">${units}</div><div style="font-size:10px;color:var(--text3)">units</div></div><div style="text-align:center;padding:0 12px"><div style="font-size:16px;font-weight:800;font-family:var(--mono);color:var(--mpesa-bright)">KSH ${col.toLocaleString()}</div><div style="font-size:10px;color:var(--text3)">collected</div></div><div style="display:flex;align-items:center;gap:8px">${statusBadge}<button class="btn btn-edit btn-sm" onclick="setLandlord('${u.id}');document.querySelector('[data-page=dashboard]').click()">View</button></div></div>`);
+  });
+  el.innerHTML = rows.join('');
+}
+window.renderAdminUsers = renderAdminUsers;
+
+function updateSidebar() {
+  const m = S.month;
+  const col = S.payments.filter(p => p.month === m).reduce((s, p) => s + p.amount, 0);
+  const fee = S.units.filter(u => !u.locked).length * PLATFORM_FEE;
+  document.getElementById('sidebar-mpesa-total').textContent = 'KSH ' + col.toLocaleString();
+  document.getElementById('sidebar-fee').textContent = 'KSH ' + fee.toLocaleString() + '/mo';
+}
+
+// ============================================================
+// KEYBOARD SHORTCUTS
+// ============================================================
+// ============================================================
+// MOBILE NAVIGATION
+// ============================================================
+function toggleMobileSidebar() {
+  document.querySelector('.sidebar').classList.toggle('mobile-open');
+  document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+function closeMobileSidebar() {
+  document.querySelector('.sidebar').classList.remove('mobile-open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+}
+window.toggleMobileSidebar = toggleMobileSidebar;
+window.closeMobileSidebar = closeMobileSidebar;
+
+function mobileNav(page, btn) {
+  // Switch page
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  // Update desktop nav too
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const desktopBtn = document.querySelector(`.nav-item[data-page="${page}"]`);
+  if (desktopBtn) desktopBtn.classList.add('active');
+  // Update mobile nav active state
+  document.querySelectorAll('.mobile-nav-item').forEach(n => n.classList.remove('active'));
+  btn.classList.add('active');
+  // Trigger page-specific renders
+  if (page === 'payments') renderMonthFilters();
+  if (page === 'reminders') renderReminders();
+  if (page === 'admin-users') renderAdminUsers();
+  if (page === 'subscriptions') renderSubscriptions();
+  // Update topbar title
+  const titles = { dashboard:'Dashboard', mpesa:'M-Pesa', units:'Units', payments:'Payments', arrears:'Arrears', reminders:'Reminders' };
+  document.getElementById('page-title').textContent = titles[page] || page;
+}
+window.mobileNav = mobileNav;
+
+// Close sidebar when desktop nav item is clicked on mobile
+document.querySelectorAll('.nav-item[data-page]').forEach(btn => {
+  btn.addEventListener('click', () => { if (window.innerWidth <= 768) closeMobileSidebar(); });
+});
+
+
+document.getElementById('reg-password').addEventListener('keydown', e => { if (e.key === 'Enter') doRegister(); });
+
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('DOMContentLoaded', async () => {
+  injectManifest();
+  const sess = getSession();
+
+  // Cinematic loading stages
+  const stages = [
+    { text: 'Initialising system...', pct: 15, delay: 300 },
+    { text: 'Connecting to cloud...', pct: 40, delay: 800 },
+    { text: 'Loading your data...', pct: 70, delay: 1400 },
+    { text: 'Almost ready...', pct: 90, delay: 2000 },
+  ];
+
+  const statusEl = document.getElementById('ls-status');
+  const barEl = document.getElementById('ls-progress-bar');
+
+  stages.forEach(({ text, pct, delay }) => {
+    setTimeout(() => {
+      if (statusEl) statusEl.textContent = text;
+      if (barEl) barEl.style.width = pct + '%';
+    }, delay);
+  });
+
+  const fallback = () => {
+    document.getElementById('loadingScreen').classList.add('hide');
+    document.getElementById('loginScreen').classList.add('active');
+  };
+
+  const showApp = () => {
+    if (statusEl) statusEl.textContent = 'Welcome back!';
+    if (barEl) barEl.style.width = '100%';
+    setTimeout(() => {
+      document.getElementById('loadingScreen').style.opacity = '0';
+      document.getElementById('loadingScreen').style.transition = 'opacity 0.4s ease';
+      setTimeout(() => document.getElementById('loadingScreen').classList.add('hide'), 400);
+    }, 300);
+  };
+
+  // Minimum 2.5s splash, max 9s before fallback to login
+  const minSplash = new Promise(r => setTimeout(r, 2500));
+  const hardTimeout = setTimeout(fallback, 9000);
+
+  if (sess) {
+    currentUser = sess;
+    try {
+      await Promise.all([launchApp(), minSplash]);
+      clearTimeout(hardTimeout);
+      showApp();
+    } catch(e) {
+      await minSplash;
+      clearTimeout(hardTimeout);
+      fallback();
+    }
+  } else {
+    await minSplash;
+    clearTimeout(hardTimeout);
+    fallback();
+  }
+});
+</script>
+</body>
+</html>
