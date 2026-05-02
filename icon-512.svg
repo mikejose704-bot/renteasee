@@ -1,0 +1,152 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bgGlow" cx="50%" cy="75%" r="60%">
+      <stop offset="0%" stop-color="#00A651" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#00A651" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="wGlow">
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="antennaGlow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <linearGradient id="buildingGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0e2416"/>
+      <stop offset="100%" stop-color="#091408"/>
+    </linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#00A651" stroke-width="0.5" stroke-opacity="0.07"/>
+    </pattern>
+  </defs>
+
+  <!-- Background with rounded corners -->
+  <rect width="512" height="512" rx="96" fill="#060d08"/>
+  <rect width="512" height="512" rx="96" fill="url(#grid)"/>
+  <rect width="512" height="512" rx="96" fill="url(#bgGlow)"/>
+
+  <!-- Ground glow -->
+  <ellipse cx="256" cy="490" rx="180" ry="30" fill="#00A651" opacity="0.12"/>
+
+  <!-- === LEFT SMALL BUILDING === -->
+  <rect x="60" y="280" width="90" height="200" fill="#0b1c0e" rx="2"/>
+  <rect x="57" y="273" width="96" height="9" fill="#074d1e" rx="2"/>
+  <!-- windows -->
+  <rect x="70" y="292" width="14" height="10" rx="1" fill="#00C060" opacity="0.75" filter="url(#wGlow)"/>
+  <rect x="92" y="292" width="14" height="10" rx="1" fill="#1a4a2a"/>
+  <rect x="114" y="292" width="14" height="10" rx="1" fill="#00C060" opacity="0.7" filter="url(#wGlow)"/>
+  <rect x="70" y="312" width="14" height="10" rx="1" fill="#1a4a2a"/>
+  <rect x="92" y="312" width="14" height="10" rx="1" fill="#00C060" opacity="0.75" filter="url(#wGlow)"/>
+  <rect x="114" y="312" width="14" height="10" rx="1" fill="#1a4a2a"/>
+  <rect x="70" y="332" width="14" height="10" rx="1" fill="#00C060" opacity="0.7" filter="url(#wGlow)"/>
+  <rect x="92" y="332" width="14" height="10" rx="1" fill="#00C060" opacity="0.65" filter="url(#wGlow)"/>
+  <rect x="114" y="332" width="14" height="10" rx="1" fill="#1a4a2a"/>
+  <rect x="70" y="352" width="14" height="10" rx="1" fill="#1a4a2a"/>
+  <rect x="92" y="352" width="14" height="10" rx="1" fill="#1a4a2a"/>
+  <rect x="114" y="352" width="14" height="10" rx="1" fill="#00C060" opacity="0.7" filter="url(#wGlow)"/>
+  <rect x="70" y="372" width="14" height="10" rx="1" fill="#00C060" opacity="0.65" filter="url(#wGlow)"/>
+  <rect x="92" y="372" width="14" height="10" rx="1" fill="#1a4a2a"/>
+  <rect x="114" y="372" width="14" height="10" rx="1" fill="#00C060" opacity="0.7" filter="url(#wGlow)"/>
+
+  <!-- === RIGHT SMALL BUILDING === -->
+  <rect x="362" y="300" width="90" height="180" fill="#0b1c0e" rx="2"/>
+  <rect x="359" y="293" width="96" height="9" fill="#074d1e" rx="2"/>
+  <!-- windows -->
+  <rect x="372" y="312" width="14" height="10" rx="1" fill="#1a4a2a"/>
+  <rect x="394" y="312" width="14" height="10" rx="1" fill="#00C060" opacity="0.75" filter="url(#wGlow)"/>
+  <rect x="416" y="312" width="14" height="10" rx="1" fill="#1a4a2a"/>
+  <rect x="372" y="332" width="14" height="10" rx="1" fill="#00C060" opacity="0.7" filter="url(#wGlow)"/>
+  <rect x="394" y="332" width="14" height="10" rx="1" fill="#1a4a2a"/>
+  <rect x="416" y="332" width="14" height="10" rx="1" fill="#00C060" opacity="0.65" filter="url(#wGlow)"/>
+  <rect x="372" y="352" width="14" height="10" rx="1" fill="#1a4a2a"/>
+  <rect x="394" y="352" width="14" height="10" rx="1" fill="#00C060" opacity="0.7" filter="url(#wGlow)"/>
+  <rect x="416" y="352" width="14" height="10" rx="1" fill="#00C060" opacity="0.75" filter="url(#wGlow)"/>
+  <rect x="372" y="372" width="14" height="10" rx="1" fill="#00C060" opacity="0.65" filter="url(#wGlow)"/>
+  <rect x="394" y="372" width="14" height="10" rx="1" fill="#1a4a2a"/>
+  <rect x="416" y="372" width="14" height="10" rx="1" fill="#1a4a2a"/>
+
+  <!-- === MAIN BUILDING (center) === -->
+  <!-- Penthouse -->
+  <rect x="186" y="148" width="140" height="60" fill="url(#buildingGrad)" rx="2"/>
+  <rect x="182" y="141" width="148" height="10" fill="#0a5c2a" rx="2"/>
+  <!-- Antenna -->
+  <line x1="256" y1="141" x2="256" y2="106" stroke="#0a5c2a" stroke-width="2.5"/>
+  <circle cx="256" cy="103" r="6" fill="#00C060" filter="url(#antennaGlow)"/>
+  <!-- Penthouse windows -->
+  <rect x="200" y="160" width="20" height="14" rx="2" fill="#00C060" opacity="0.9" filter="url(#wGlow)"/>
+  <rect x="230" y="160" width="20" height="14" rx="2" fill="#1a4a2a"/>
+  <rect x="262" y="160" width="20" height="14" rx="2" fill="#1a4a2a"/>
+  <rect x="292" y="160" width="20" height="14" rx="2" fill="#00C060" opacity="0.9" filter="url(#wGlow)"/>
+
+  <!-- Main tower -->
+  <rect x="156" y="206" width="200" height="274" fill="url(#buildingGrad)" rx="2"/>
+  <rect x="152" y="198" width="208" height="11" fill="#0a5c2a" rx="2"/>
+
+  <!-- Main building windows - 5 cols x 9 rows -->
+  <!-- row 1 -->
+  <rect x="168" y="220" width="20" height="14" rx="2" fill="#00C060" opacity="0.9" filter="url(#wGlow)"/>
+  <rect x="198" y="220" width="20" height="14" rx="2" fill="#1a4a2a"/>
+  <rect x="228" y="220" width="20" height="14" rx="2" fill="#00C060" opacity="0.85" filter="url(#wGlow)"/>
+  <rect x="258" y="220" width="20" height="14" rx="2" fill="#1a4a2a"/>
+  <rect x="288" y="220" width="20" height="14" rx="2" fill="#00C060" opacity="0.9" filter="url(#wGlow)"/>
+  <rect x="318" y="220" width="20" height="14" rx="2" fill="#1a4a2a"/>
+  <!-- row 2 -->
+  <rect x="168" y="244" width="20" height="14" rx="2" fill="#1a4a2a"/>
+  <rect x="198" y="244" width="20" height="14" rx="2" fill="#00C060" opacity="0.85" filter="url(#wGlow)"/>
+  <rect x="228" y="244" width="20" height="14" rx="2" fill="#1a4a2a"/>
+  <rect x="258" y="244" width="20" height="14" rx="2" fill="#00C060" opacity="0.9" filter="url(#wGlow)"/>
+  <rect x="288" y="244" width="20" height="14" rx="2" fill="#1a4a2a"/>
+  <rect x="318" y="244" width="20" height="14" rx="2" fill="#00C060" opacity="0.85" filter="url(#wGlow)"/>
+  <!-- row 3 -->
+  <rect x="168" y="268" width="20" height="14" rx="2" fill="#00C060" opacity="0.85" filter="url(#wGlow)"/>
+  <rect x="198" y="268" width="20" height="14" rx="2" fill="#00C060" opacity="0.9" filter="url(#wGlow)"/>
+  <rect x="228" y="268" width="20" height="14" rx="2" fill="#1a4a2a"/>
+  <rect x="258" y="268" width="20" height="14" rx="2" fill="#1a4a2a"/>
+  <rect x="288" y="268" width="20" height="14" rx="2" fill="#00C060" opacity="0.85" filter="url(#wGlow)"/>
+  <rect x="318" y="268" width="20" height="14" rx="2" fill="#1a4a2a"/>
+  <!-- row 4 -->
+  <rect x="168" y="292" width="20" height="14" rx="2" fill="#1a4a2a"/>
+  <rect x="198" y="292" width="20" height="14" rx="2" fill="#1a4a2a"/>
+  <rect x="228" y="292" width="20" height="14" rx="2" fill="#00C060" opacity="0.9" filter="url(#wGlow)"/>
+  <rect x="258" y="292" width="20" height="14" rx="2" fill="#00C060" opacity="0.85" filter="url(#wGlow)"/>
+  <rect x="288" y="292" width="20" height="14" rx="2" fill="#1a4a2a"/>
+  <rect x="318" y="292" width="20" height="14" rx="2" fill="#00C060" opacity="0.9" filter="url(#wGlow)"/>
+  <!-- row 5 -->
+  <rect x="168" y="316" width="20" height="14" rx="2" fill="#00C060" opacity="0.9" filter="url(#wGlow)"/>
+  <rect x="198" y="316" width="20" height="14" rx="2" fill="#1a4a2a"/>
+  <rect x="228" y="316" width="20" height="14" rx="2" fill="#1a4a2a"/>
+  <rect x="258" y="316" width="20" height="14" rx="2" fill="#00C060" opacity="0.85" filter="url(#wGlow)"/>
+  <rect x="288" y="316" width="20" height="14" rx="2" fill="#00C060" opacity="0.9" filter="url(#wGlow)"/>
+  <rect x="318" y="316" width="20" height="14" rx="2" fill="#1a4a2a"/>
+  <!-- row 6 -->
+  <rect x="168" y="340" width="20" height="14" rx="2" fill="#1a4a2a"/>
+  <rect x="198" y="340" width="20" height="14" rx="2" fill="#00C060" opacity="0.85" filter="url(#wGlow)"/>
+  <rect x="228" y="340" width="20" height="14" rx="2" fill="#00C060" opacity="0.9" filter="url(#wGlow)"/>
+  <rect x="258" y="340" width="20" height="14" rx="2" fill="#1a4a2a"/>
+  <rect x="288" y="340" width="20" height="14" rx="2" fill="#1a4a2a"/>
+  <rect x="318" y="340" width="20" height="14" rx="2" fill="#00C060" opacity="0.85" filter="url(#wGlow)"/>
+  <!-- row 7 -->
+  <rect x="168" y="364" width="20" height="14" rx="2" fill="#00C060" opacity="0.85" filter="url(#wGlow)"/>
+  <rect x="198" y="364" width="20" height="14" rx="2" fill="#1a4a2a"/>
+  <rect x="228" y="364" width="20" height="14" rx="2" fill="#00C060" opacity="0.9" filter="url(#wGlow)"/>
+  <rect x="258" y="364" width="20" height="14" rx="2" fill="#00C060" opacity="0.85" filter="url(#wGlow)"/>
+  <rect x="288" y="364" width="20" height="14" rx="2" fill="#1a4a2a"/>
+  <rect x="318" y="364" width="20" height="14" rx="2" fill="#1a4a2a"/>
+  <!-- row 8 -->
+  <rect x="168" y="388" width="20" height="14" rx="2" fill="#1a4a2a"/>
+  <rect x="198" y="388" width="20" height="14" rx="2" fill="#00C060" opacity="0.9" filter="url(#wGlow)"/>
+  <rect x="228" y="388" width="20" height="14" rx="2" fill="#1a4a2a"/>
+  <rect x="258" y="388" width="20" height="14" rx="2" fill="#1a4a2a"/>
+  <rect x="288" y="388" width="20" height="14" rx="2" fill="#00C060" opacity="0.85" filter="url(#wGlow)"/>
+  <rect x="318" y="388" width="20" height="14" rx="2" fill="#00C060" opacity="0.9" filter="url(#wGlow)"/>
+
+  <!-- Lobby -->
+  <rect x="216" y="420" width="80" height="60" fill="#0a3d1a" rx="2"/>
+  <rect x="230" y="420" width="22" height="60" fill="#0d5c28" rx="1"/>
+  <rect x="260" y="420" width="22" height="60" fill="#0d5c28" rx="1"/>
+  <ellipse cx="256" cy="420" rx="46" ry="8" fill="rgba(0,192,96,0.12)"/>
+
+  <!-- Ground line -->
+  <rect x="40" y="480" width="432" height="1" fill="#00A651" opacity="0.2"/>
+</svg>
